@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Waypoint : MonoBehaviour {
+[System.Serializable]
+public class Waypoint
+{
+    public Vector3 position;
+    public Vector3 rotation;
+    public float time;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public Waypoint(Vector3 position, Vector3 rotation, float time) {
+        this.position = position;
+        this.rotation = rotation;
+        this.time = time;
+    }
 }
