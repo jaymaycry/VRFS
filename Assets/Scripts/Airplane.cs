@@ -7,10 +7,10 @@ public class Airplane : MonoBehaviour {
     public GameObject planeCessna;
 
     void Start() {
-        planeCessna = GameObject.Find("plane_cessna");
+        planeCessna = GameObject.Find("Small Passenger Plane");
     }
     public void reposition(Vector3 position, Vector3 rotation) {
-        transform.position = position;
+        transform.localPosition = position;
         transform.rotation = Quaternion.Euler(rotation);
     } 
 }
