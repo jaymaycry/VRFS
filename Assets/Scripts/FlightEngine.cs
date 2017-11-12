@@ -4,22 +4,22 @@ using UnityEngine;
 
 public class FlightEngine {
     //Flugzeugspezifisch
-    public double cw = 0.492;
-    public double ca = 1.48;
+    public double cw = 0.02;
+    public double ca = 1.041;
     //Tragfläche
     public double A = 846;
     //Masse
     public double m = 492000;
     //Schubkraft
-    public double fs = 4*311000;
+    public double fs = 1244000;
 
 
     //Umweltspezifisch
     public double g = 9.81;
     //Windgeschwindigkeit
-    public Vector2 v_wind0 = new Vector2(0, 0);
+    public Vector2 v_wind0 = new Vector2(-5, 0);
     //TODO Luftdichte berechnen abhängig Temperatur und Höhe und Luftfeuchtigkeit
-    double roh = 1;
+    double roh = 1.2;
 
 
     //zeitlich ändernde Parameter
@@ -41,7 +41,7 @@ public class FlightEngine {
     {
         Vector2 v = v_wind0 + v_wind;
 
-        float help = (float)(cw * (roh / 2.0) * A * v.magnitude);
+        float help = (float)(ca * (roh / 2.0) * A * v.magnitude);
         return new Vector2(help * v.y, -help * v.x);
     }
 
@@ -88,13 +88,13 @@ public class FlightEngine {
             /*Debug.Log("windspeed");
             Debug.Log(windspeed);
             Debug.Log("Fw(windspeed)");
-            Debug.Log(Fw(windspeed));
+            Debug.Log(Fw(windspeed));*/
 
             Debug.Log("Auftrieb");
             Debug.Log(Fa(windspeed));
             Debug.Log("Fg");
             Debug.Log(Fg());
-            Debug.Log("Fs");
+            /*Debug.Log("Fs");
             Debug.Log(Fs(pitch));
             Debug.Log("Fres t=" + i);
             Debug.Log(resultingforce);*/

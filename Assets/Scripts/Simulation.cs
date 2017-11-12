@@ -26,7 +26,7 @@ public class Simulation : MonoBehaviour {
 
         engine = new FlightEngine();
 
-        waypoints = engine.CalculateWaypoints(1500, 0.02f);
+        waypoints = engine.CalculateWaypoints(3000, 0.02f);
 
         airplane = GetComponentInChildren<Airplane>();
         path = GetComponentInChildren<Path>();
