@@ -52,7 +52,7 @@ public class FlightSimulator_Euler : MonoBehaviour
     {
         Vector2 v = v_wind0 + v_wind;
 
-        float help = (float)(cw * (roh / 2.0) * A * v.magnitude);
+        float help = (float)(ca * (roh / 2.0) * A * v.magnitude);
         return new Vector2(help * v.y, -help * v.x);
     }
 
