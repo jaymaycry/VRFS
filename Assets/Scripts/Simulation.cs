@@ -5,6 +5,7 @@ using UnityEngine;
 public class Simulation : MonoBehaviour {
     public FlightEngine engine;
     public List<Waypoint> waypoints;
+    public List<Interaction> interactions;
     public AircraftHandler aircraftHandler;
     public PathHandler pathHandler;
     public Waypoint current;
@@ -18,9 +19,17 @@ public class Simulation : MonoBehaviour {
         
         aircraftHandler = GetComponentInChildren<AircraftHandler>();
         pathHandler = GetComponentInChildren<PathHandler>();
+        interactions = new List<Interaction>();
+
+        // fake interactions
+        interactions.Add(new Interaction(0, 1, 0));
+        interactions.Add(new Interaction(35, 1, 100));
 
         engine = new FlightEngine(aircraftHandler.getAircraft());
-        waypoints = engine.CalculateWaypoints(3000, 0.02f);
+
+
+        // calculate waypoints
+        waypoints = engine.CalculateWaypoints(5000, 0.02f, interactions);
 
         updatePath();
         resetSimulator();
@@ -32,7 +41,7 @@ public class Simulation : MonoBehaviour {
 	}
 
     private void updatePath() {
-        pathHandler.updateWaypoints(waypoints.ToArray());
+        pathHandler.updateWaypoints(waypoints);
     }
 
     private void resetSimulator() {

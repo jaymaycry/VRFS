@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class FlightEngine {
     public Aircraft aircraft;
+
     //Umweltspezifisch
     public double g = 9.81;
     //Windgeschwindigkeit
     public Vector2 v_wind0 = new Vector2(-5, 0);
+
 
 
     public FlightEngine(Aircraft aircraft) {
@@ -38,11 +40,16 @@ public class FlightEngine {
         return new Vector2(0, (float)(-aircraft.mass * g));
     }
 
+    double degreeToRadians(double pitch) {
+        return Mathf.PI * 2 * (pitch / 360);
+    }
+
     // Fs
-    Vector2 calcThrust(double pitch)
+    Vector2 calcThrust(double pitch, double thrustFactor)
     {
-        double totalThrust = aircraft.engines * aircraft.maxThrust;
-        return new Vector2((float)(Mathf.Cos((float)pitch) * totalThrust), (float)(Mathf.Sin((float)pitch) * totalThrust));
+        double totalThrust = aircraft.engines * aircraft.maxThrust * thrustFactor;
+        return new Vector2((float)(Mathf.Cos((float)degreeToRadians(pitch)) * totalThrust),
+                           (float)(Mathf.Sin((float)degreeToRadians(pitch)) * totalThrust));
     }
 
     // gamma
@@ -57,29 +64,67 @@ public class FlightEngine {
         return calcSlope(trajectory) - pitch;
     }
 
-    public List<Waypoint> CalculateWaypoints(int steps, float deltaTime)
+    List<Interaction> interpolateInteractions(List<Interaction> interactions, int steps) {
+        List<Interaction> interpolated = new List<Interaction>();
+
+        Interaction current = new Interaction(0, 0, 0);
+        Interaction next = new Interaction(0, 0, steps-1);
+
+        int j = 0;
+
+        // set first interaction as next
+        if (interactions.Count > 0) {
+            next = interactions[0];
+            j++;
+        }
+
+        for (int i = 0; i < steps; i++) {
+            // update current
+            if (i >= next.time) {
+                current = next;
+                j++;
+            }
+
+            if (j < interactions.Count && i < interactions[j].time) {
+                next = interactions[j];
+            }
+
+            interpolated.Add(current);
+        }
+
+        return interpolated;
+    }
+
+    public List<Waypoint> CalculateWaypoints(int steps, float deltaTime, List<Interaction> interactions)
     {
         List<Waypoint> waypoints = new List<Waypoint>();
     
         Vector3 velocity = new Vector3(0f, 0f, 0f);
         Vector3 position = new Vector3(0f, 0f, 0f); 
         Vector3 rotation = new Vector3(0f, 0f, 0f);
-        double pitch = Mathf.PI / 18;
+        double pitch = 0;
+        double thrustFactor = 0;
         double angleOfAttack = 0;
         double cw = aircraft.cW0;
         double ca = aircraft.cA0;
         //TODO Luftdichte berechnen abhängig Temperatur und Höhe und Luftfeuchtigkeit
         double roh = 1.2;
 
+        List<Interaction> interpolatedInteractions = interpolateInteractions(interactions, steps);
+        Debug.Log(interpolatedInteractions[0].pitch);
+        Debug.Log(interpolatedInteractions[1].pitch);
         waypoints.Add(new Waypoint(position, rotation, 0));
 
         for (int i = 1; i < steps; i++) {
+            pitch = interpolatedInteractions[i].pitch;
+            thrustFactor = interpolatedInteractions[i].thrust;
+
             var windspeed = new Vector2(-velocity.z, -velocity.y);
 
             Vector2 drag = calcDrag(windspeed, cw, roh);
             Vector2 lift = calcLift(windspeed, ca, roh);
             Vector2 gravity = calcGravity();
-            Vector2 thrust = calcThrust(pitch);
+            Vector2 thrust = calcThrust(pitch, thrustFactor);
 
             Vector2 resultingforce = drag + lift + gravity + thrust;
 
