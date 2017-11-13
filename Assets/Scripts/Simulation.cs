@@ -5,8 +5,8 @@ using UnityEngine;
 public class Simulation : MonoBehaviour {
     public FlightEngine engine;
     public List<Waypoint> waypoints;
-    public Airplane airplane;
-    public Path path;
+    public AircraftHandler aircraftHandler;
+    public PathHandler pathHandler;
     public Waypoint current;
     public Waypoint next;
     public float time;
@@ -15,21 +15,13 @@ public class Simulation : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        /* waypoints.Add(new Waypoint(new Vector3(0, 0, 0), new Vector3(0, 0, 0), 0));
-        waypoints.Add(new Waypoint(new Vector3(0, 0, 30), new Vector3(0, 0, 0), 300));
-        waypoints.Add(new Waypoint(new Vector3(0, 0, 70), new Vector3(-1, 0, 0), 600));
-        waypoints.Add(new Waypoint(new Vector3(0, 0, 71), new Vector3(-3, 0, 0), 601));
-        waypoints.Add(new Waypoint(new Vector3(0, 0, 72), new Vector3(-7, 0, 0), 602));
-        waypoints.Add(new Waypoint(new Vector3(0, 0, 73), new Vector3(-12, 0, 0), 603));
-        waypoints.Add(new Waypoint(new Vector3(0, 0, 74), new Vector3(-15, 0, 0), 604));
-        waypoints.Add(new Waypoint(new Vector3(0, 20, 130), new Vector3(0, 0, 0), 800));*/
+        
+        aircraftHandler = GetComponentInChildren<AircraftHandler>();
+        pathHandler = GetComponentInChildren<PathHandler>();
 
-        engine = new FlightEngine();
-
+        engine = new FlightEngine(aircraftHandler.getAircraft());
         waypoints = engine.CalculateWaypoints(3000, 0.02f);
 
-        airplane = GetComponentInChildren<Airplane>();
-        path = GetComponentInChildren<Path>();
         updatePath();
         resetSimulator();
 	}
@@ -40,7 +32,7 @@ public class Simulation : MonoBehaviour {
 	}
 
     private void updatePath() {
-        path.updateWaypoints(waypoints.ToArray());
+        pathHandler.updateWaypoints(waypoints.ToArray());
     }
 
     private void resetSimulator() {
@@ -67,7 +59,7 @@ public class Simulation : MonoBehaviour {
 
         Vector3 newPosition = current.position + ((time - current.time) * segment);
         Vector3 newRotation = current.rotation;
-        airplane.reposition(newPosition, newRotation);
+        aircraftHandler.reposition(newPosition, newRotation);
 
         time++;
     }

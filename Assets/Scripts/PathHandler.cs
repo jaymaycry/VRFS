@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Path : MonoBehaviour {
+public class PathHandler : MonoBehaviour {
 
     LineRenderer lineRenderer;
     Waypoint[] waypoints;

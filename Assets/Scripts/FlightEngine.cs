@@ -3,65 +3,58 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class FlightEngine {
-    //Flugzeugspezifisch
-    public double cw = 0.02;
-    public double ca = 1.041;
-    //Tragfläche
-    public double A = 846;
-    //Masse
-    public double m = 492000;
-    //Schubkraft
-    public double fs = 1244000;
-
-
+    public Aircraft aircraft;
     //Umweltspezifisch
     public double g = 9.81;
     //Windgeschwindigkeit
     public Vector2 v_wind0 = new Vector2(-5, 0);
-    //TODO Luftdichte berechnen abhängig Temperatur und Höhe und Luftfeuchtigkeit
-    double roh = 1.2;
 
 
-    //zeitlich ändernde Parameter
-    private Vector2 v_Flugzeug = new Vector2(0, 0);
-    private float pitch = Mathf.PI / 18;
+    public FlightEngine(Aircraft aircraft) {
+        this.aircraft = aircraft;
+    }
 
-
-    // Wiederstandskraft
-    Vector2 Fw(Vector2 v_wind)
+    // Fl
+    Vector2 calcDrag(Vector2 v_wind, double cw, double roh)
     {
         Vector2 v_windtotal = v_wind0 + v_wind;
 
-        float help = (float)(cw * (roh / 2.0) * A * v_windtotal.magnitude);
+        float help = (float)(cw * (roh / 2.0) * aircraft.wingArea * v_windtotal.magnitude);
         return new Vector2(help * v_windtotal.x, help * v_windtotal.y);
     }
 
-    // Auftriebskraft
-    Vector2 Fa(Vector2 v_wind)
+    // Fa
+    Vector2 calcLift(Vector2 v_wind, double ca, double roh)
     {
         Vector2 v = v_wind0 + v_wind;
 
-        float help = (float)(ca * (roh / 2.0) * A * v.magnitude);
+        float help = (float)(ca * (roh / 2.0) * aircraft.wingArea * v.magnitude);
         return new Vector2(help * v.y, -help * v.x);
     }
 
-    // Schwerkraft
-    Vector2 Fg()
+    // Fg
+    Vector2 calcGravity()
     {
-        return new Vector2(0, (float)(-m * g));
+        return new Vector2(0, (float)(-aircraft.mass * g));
     }
 
-    //Schubkraft abgängig vom Pitch beta
-    Vector2 Fs(float beta)
+    // Fs
+    Vector2 calcThrust(double pitch)
     {
-        return new Vector2((float)(Mathf.Cos(beta) * fs), (float)(Mathf.Sin(beta) * fs));
+        double totalThrust = aircraft.engines * aircraft.maxThrust;
+        return new Vector2((float)(Mathf.Cos((float)pitch) * totalThrust), (float)(Mathf.Sin((float)pitch) * totalThrust));
     }
 
-    //effektiver Flugwinkel
-    double gamma()
+    // gamma
+    double calcSlope(Vector2 trajectory)
     {
-        Vector2 fa = Fa(v_Flugzeug);
-        return Mathf.Atan(-fa.x / fa.y);
+        return Vector2.Angle(new Vector2(0, 0), trajectory);
+    }
+
+    // alpha
+    double calcAngleOfAttack(double pitch, Vector2 trajectory)
+    {
+        return calcSlope(trajectory) - pitch;
     }
 
     public List<Waypoint> CalculateWaypoints(int steps, float deltaTime)
@@ -69,16 +62,26 @@ public class FlightEngine {
         List<Waypoint> waypoints = new List<Waypoint>();
     
         Vector3 velocity = new Vector3(0f, 0f, 0f);
-
         Vector3 position = new Vector3(0f, 0f, 0f); 
         Vector3 rotation = new Vector3(0f, 0f, 0f);
+        double pitch = Mathf.PI / 18;
+        double angleOfAttack = 0;
+        double cw = aircraft.cW0;
+        double ca = aircraft.cA0;
+        //TODO Luftdichte berechnen abhängig Temperatur und Höhe und Luftfeuchtigkeit
+        double roh = 1.2;
 
         waypoints.Add(new Waypoint(position, rotation, 0));
 
         for (int i = 1; i < steps; i++) {
             var windspeed = new Vector2(-velocity.z, -velocity.y);
 
-            Vector2 resultingforce = Fw(windspeed) + Fa(windspeed) + Fg() + Fs(pitch);
+            Vector2 drag = calcDrag(windspeed, cw, roh);
+            Vector2 lift = calcLift(windspeed, ca, roh);
+            Vector2 gravity = calcGravity();
+            Vector2 thrust = calcThrust(pitch);
+
+            Vector2 resultingforce = drag + lift + gravity + thrust;
 
             // prevent sinking
             if (resultingforce.y < 0) {
@@ -88,27 +91,39 @@ public class FlightEngine {
             /*Debug.Log("windspeed");
             Debug.Log(windspeed);
             Debug.Log("Fw(windspeed)");
-            Debug.Log(Fw(windspeed));*/
+            Debug.Log(Fw(windspeed));
 
             Debug.Log("Auftrieb");
-            Debug.Log(Fa(windspeed));
+            Debug.Log(calcFa(windspeed));
             Debug.Log("Fg");
-            Debug.Log(Fg());
+            Debug.Log(calcFg());
             /*Debug.Log("Fs");
             Debug.Log(Fs(pitch));
             Debug.Log("Fres t=" + i);
-            Debug.Log(resultingforce);*/
+            Debug.Log(resultingforce);
 
-
-
-            velocity = velocity + (new Vector3(0f, resultingforce.y, resultingforce.x) * (float)(1/m) * deltaTime);
-
-            position = position + velocity * deltaTime;
             Debug.Log("Position x t=" + i);
             Debug.Log(position);
             Debug.Log("Velocity x t=" + i);
-            Debug.Log(velocity);
-            waypoints.Add(new Waypoint(position, rotation, i));
+            Debug.Log(velocity);*/
+
+            angleOfAttack = calcAngleOfAttack(pitch, resultingforce);
+            cw = aircraft.calcCW(angleOfAttack);
+            ca = aircraft.calcCA(angleOfAttack);
+
+            velocity = velocity + (new Vector3(0f, resultingforce.y, resultingforce.x) * (float)(1 / aircraft.mass) * deltaTime);
+
+            position = position + velocity * deltaTime;
+            rotation = new Vector3((float)-pitch, 0f, 0f);
+
+
+            waypoints.Add(new Waypoint(position,
+                                       rotation,
+                                       new Vector3(0f, drag.y, drag.x),
+                                       new Vector3(0f, lift.y, lift.x),
+                                       new Vector3(0f, gravity.y, gravity.x),
+                                       new Vector3(0f, thrust.y, thrust.x),
+                                       i));
         }
 
         return waypoints;
