@@ -23,7 +23,8 @@ public class Simulation : MonoBehaviour {
 
         // fake interactions
         interactions.Add(new Interaction(0, 1, 0));
-        interactions.Add(new Interaction(35, 1, 100));
+        interactions.Add(new Interaction(35, 1, 1000));
+        interactions.Add(new Interaction(0, 0.1, 1400));
 
         engine = new FlightEngine(aircraftHandler.getAircraft());
 

@@ -5,10 +5,11 @@ using UnityEngine;
 public class FlightEngine {
     public Aircraft aircraft;
 
-    //Umweltspezifisch
-    public double g = 9.81;
-    //Windgeschwindigkeit
-    public Vector2 v_wind0 = new Vector2(-5, 0);
+    /**
+     * ENVIRONMENT
+     */
+    public double g = 9.81; // gravity
+    public Vector2 v_wind0 = new Vector2(-5, 0); // windspeed
 
 
 
@@ -64,6 +65,10 @@ public class FlightEngine {
         return calcSlope(trajectory) - pitch;
     }
 
+    /**
+     * fills the array with interactions between the setted ones for easier processing
+     * TODO "smooth" out the interactions in between to have softer transitions of pitch
+     */
     List<Interaction> interpolateInteractions(List<Interaction> interactions, int steps) {
         List<Interaction> interpolated = new List<Interaction>();
 
@@ -103,6 +108,7 @@ public class FlightEngine {
         Vector3 position = new Vector3(0f, 0f, 0f); 
         Vector3 rotation = new Vector3(0f, 0f, 0f);
         double pitch = 0;
+        bool grounded = true;
         double thrustFactor = 0;
         double angleOfAttack = 0;
         double cw = aircraft.cW0;
@@ -110,9 +116,10 @@ public class FlightEngine {
         //TODO Luftdichte berechnen abhängig Temperatur und Höhe und Luftfeuchtigkeit
         double roh = 1.2;
 
+        // interpolate instructions
         List<Interaction> interpolatedInteractions = interpolateInteractions(interactions, steps);
-        Debug.Log(interpolatedInteractions[0].pitch);
-        Debug.Log(interpolatedInteractions[1].pitch);
+
+        // add default position and rotation to start
         waypoints.Add(new Waypoint(position, rotation, 0));
 
         for (int i = 1; i < steps; i++) {
@@ -128,8 +135,15 @@ public class FlightEngine {
 
             Vector2 resultingforce = drag + lift + gravity + thrust;
 
+
+            // TODO clean this ugly hacks
+            if (position.y > 0 && grounded) {
+                grounded = false;
+            } else {
+                grounded = true;
+            }
             // prevent sinking
-            if (resultingforce.y < 0) {
+            if (resultingforce.y < 0 && grounded) {
                 resultingforce.y = 0;
             }
 
