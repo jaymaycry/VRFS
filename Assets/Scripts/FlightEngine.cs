@@ -2,74 +2,62 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FlightEngine {
-    public Aircraft aircraft;
-
-    /**
-     * ENVIRONMENT
-     */
-    public double g = 9.81; // gravity
-    public Vector2 v_wind0 = new Vector2(-5, 0); // windspeed
-
-
-
-    public FlightEngine(Aircraft aircraft) {
-        this.aircraft = aircraft;
-    }
+public static class FlightEngine {
+    public static double g = 9.81; // gravity
 
     // Fl
-    Vector2 calcDrag(Vector2 v_wind, double cw, double roh)
+    private static Vector2 CalcDrag(Aircraft aircraft, Vector2 windVelocity, Vector2 aircraftWindVelocity, double cw, double roh)
     {
-        Vector2 v_windtotal = v_wind0 + v_wind;
+        Vector2 windVelocityTotal = windVelocity + aircraftWindVelocity;
 
-        float help = (float)(cw * (roh / 2.0) * aircraft.wingArea * v_windtotal.magnitude);
-        return new Vector2(help * v_windtotal.x, help * v_windtotal.y);
+        float help = (float)(cw * (roh / 2.0) * aircraft.wingArea * windVelocityTotal.magnitude);
+        return new Vector2(help * windVelocityTotal.x, help * windVelocityTotal.y);
     }
 
     // Fa
-    Vector2 calcLift(Vector2 v_wind, double ca, double roh)
+    private static Vector2 CalcLift(Aircraft aircraft, Vector2 windVelocity, Vector2 aircraftWindVelocity, double ca, double roh)
     {
-        Vector2 v = v_wind0 + v_wind;
+        Vector2 windVelocityTotal = windVelocity + aircraftWindVelocity;
 
-        float help = (float)(ca * (roh / 2.0) * aircraft.wingArea * v.magnitude);
-        return new Vector2(help * v.y, -help * v.x);
+        float help = (float)(ca * (roh / 2.0) * aircraft.wingArea * windVelocityTotal.magnitude);
+        return new Vector2(help * windVelocityTotal.y, -help * windVelocityTotal.x);
     }
 
     // Fg
-    Vector2 calcGravity()
+    private static Vector2 CalcGravity(double mass)
     {
-        return new Vector2(0, (float)(-aircraft.mass * g));
+        return new Vector2(0, (float)(-mass * g));
     }
 
-    double degreeToRadians(double pitch) {
+    private static double DegreeToRadians(double pitch) {
         return Mathf.PI * 2 * (pitch / 360);
     }
 
     // Fs
-    Vector2 calcThrust(double pitch, double thrustFactor)
+    private static Vector2 CalcThrust(Aircraft aircraft, double pitch, double thrustFactor)
     {
         double totalThrust = aircraft.engines * aircraft.maxThrust * thrustFactor;
-        return new Vector2((float)(Mathf.Cos((float)degreeToRadians(pitch)) * totalThrust),
-                           (float)(Mathf.Sin((float)degreeToRadians(pitch)) * totalThrust));
+        return new Vector2((float)(Mathf.Cos((float)DegreeToRadians(pitch)) * totalThrust),
+                           (float)(Mathf.Sin((float)DegreeToRadians(pitch)) * totalThrust));
     }
 
     // gamma
-    double calcSlope(Vector2 trajectory)
+    private static double CalcSlope(Vector2 trajectory)
     {
         return Vector2.Angle(new Vector2(0, 0), trajectory);
     }
 
     // alpha
-    double calcAngleOfAttack(double pitch, Vector2 trajectory)
+    private static double CalcAngleOfAttack(double pitch, Vector2 trajectory)
     {
-        return calcSlope(trajectory) - pitch;
+        return CalcSlope(trajectory) - pitch;
     }
 
     /**
      * fills the array with interactions between the setted ones for easier processing
      * TODO "smooth" out the interactions in between to have softer transitions of pitch
      */
-    List<Interaction> interpolateInteractions(List<Interaction> interactions, int steps) {
+    private static List<Interaction> InterpolateInteractions(List<Interaction> interactions, int steps) {
         List<Interaction> interpolated = new List<Interaction>();
 
         Interaction current = new Interaction(0, 0, 0);
@@ -100,7 +88,7 @@ public class FlightEngine {
         return interpolated;
     }
 
-    public List<Waypoint> CalculateWaypoints(int steps, float deltaTime, List<Interaction> interactions)
+    public static List<Waypoint> CalculateWaypoints(Aircraft aircraft, List<Interaction> interactions, Vector2 windVelocity, float deltaTime, int steps)
     {
         List<Waypoint> waypoints = new List<Waypoint>();
     
@@ -117,7 +105,7 @@ public class FlightEngine {
         double roh = 1.2;
 
         // interpolate instructions
-        List<Interaction> interpolatedInteractions = interpolateInteractions(interactions, steps);
+        List<Interaction> interpolatedInteractions = InterpolateInteractions(interactions, steps);
 
         // add default position and rotation to start
         waypoints.Add(new Waypoint(position, rotation, 0));
@@ -126,15 +114,14 @@ public class FlightEngine {
             pitch = interpolatedInteractions[i].pitch;
             thrustFactor = interpolatedInteractions[i].thrust;
 
-            var windspeed = new Vector2(-velocity.z, -velocity.y);
+            var aircraftWindVelocity = new Vector2(-velocity.z, -velocity.y);
 
-            Vector2 drag = calcDrag(windspeed, cw, roh);
-            Vector2 lift = calcLift(windspeed, ca, roh);
-            Vector2 gravity = calcGravity();
-            Vector2 thrust = calcThrust(pitch, thrustFactor);
+            Vector2 drag = CalcDrag(aircraft, windVelocity, aircraftWindVelocity, cw, roh);
+            Vector2 lift = CalcLift(aircraft, windVelocity, aircraftWindVelocity, ca, roh);
+            Vector2 gravity = CalcGravity(aircraft.mass);
+            Vector2 thrust = CalcThrust(aircraft, pitch, thrustFactor);
 
             Vector2 resultingforce = drag + lift + gravity + thrust;
-
 
             // TODO clean this ugly hacks
             if (position.y > 0 && grounded) {
@@ -147,32 +134,14 @@ public class FlightEngine {
                 resultingforce.y = 0;
             }
 
-            /*Debug.Log("windspeed");
-            Debug.Log(windspeed);
-            Debug.Log("Fw(windspeed)");
-            Debug.Log(Fw(windspeed));
-
-            Debug.Log("Auftrieb");
-            Debug.Log(calcFa(windspeed));
-            Debug.Log("Fg");
-            Debug.Log(calcFg());
-            /*Debug.Log("Fs");
-            Debug.Log(Fs(pitch));
-            Debug.Log("Fres t=" + i);
-            Debug.Log(resultingforce);
-
-            Debug.Log("Position x t=" + i);
-            Debug.Log(position);
-            Debug.Log("Velocity x t=" + i);
-            Debug.Log(velocity);*/
-
-            angleOfAttack = calcAngleOfAttack(pitch, resultingforce);
-            cw = aircraft.calcCW(angleOfAttack);
-            ca = aircraft.calcCA(angleOfAttack);
+            angleOfAttack = CalcAngleOfAttack(pitch, resultingforce);
+            cw = aircraft.CalcCW(angleOfAttack);
+            ca = aircraft.CalcCA(angleOfAttack);
 
             velocity = velocity + (new Vector3(0f, resultingforce.y, resultingforce.x) * (float)(1 / aircraft.mass) * deltaTime);
 
             position = position + velocity * deltaTime;
+
             rotation = new Vector3((float)-pitch, 0f, 0f);
 
 

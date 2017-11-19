@@ -15,7 +15,9 @@ public class PathHandler : MonoBehaviour {
         this.waypoints = waypoints.ToArray();
         lineRenderer.positionCount = this.waypoints.Length;
         for (int i = 0; i < this.waypoints.Length; i++) {
-            lineRenderer.SetPosition(i, this.waypoints[i].position);
+            Vector3 position = this.waypoints[i].position;
+            position.z = position.z / 2f;
+            lineRenderer.SetPosition(i, position);
         }
     }
 }

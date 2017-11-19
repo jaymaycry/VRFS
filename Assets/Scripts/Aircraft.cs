@@ -35,23 +35,23 @@ public class Aircraft {
         this.model = model;
     }
 
-    public void showModel() {
+    public void ShowModel() {
         MeshRenderer render = model.GetComponentInChildren<MeshRenderer>();
         render.enabled = true;
     }
 
-    public void deactivateModel() {
+    public void HideModel() {
         MeshRenderer render = model.GetComponentInChildren<MeshRenderer>();
         render.enabled = false;
     }
 
     // TODO calcCA for other plane types - subclasses
-    public double calcCA(double angleOfAttack) {
+    public double CalcCA(double angleOfAttack) {
         return 0.0549 * angleOfAttack + cA0;
     }
 
     // TODO calcCW for other plane types - subclasses
-    public double calcCW(double angleOfAttack) {
-        return cW0 + 0.017 * Mathf.Pow((float)(calcCA(angleOfAttack) - cA0), 2);
+    public double CalcCW(double angleOfAttack) {
+        return cW0 + 0.017 * Mathf.Pow((float)(CalcCA(angleOfAttack) - cA0), 2);
     }
 }

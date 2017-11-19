@@ -14,11 +14,12 @@ public class AircraftHandler : MonoBehaviour {
 
     // returns the active aircraft
     // TODO add other aircrafts as well
-    public Aircraft getAircraft() {
+    public Aircraft GetAircraft() {
         return aircraft;
     }
 
-    public void reposition(Vector3 position, Vector3 rotation) {
+    public void Reposition(Vector3 position, Vector3 rotation) {
+        position.z = position.z / 2f;
         transform.localPosition = position;
         transform.rotation = Quaternion.Euler(rotation);
     }
