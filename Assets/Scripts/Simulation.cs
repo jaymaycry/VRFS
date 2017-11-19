@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Simulation : MonoBehaviour {
+    public Vector2 windVelocity;
     public List<Waypoint> waypoints;
-    public Airplane airplane;
-    public Path path;
+    public List<Interaction> interactions;
+    public AircraftHandler aircraftHandler;
+    public PathHandler pathHandler;
     public Waypoint current;
     public Waypoint next;
     public float time;
@@ -13,43 +15,36 @@ public class Simulation : MonoBehaviour {
 
 
 	// Use this for initialization
-	void Start () {
-        waypoints.Add(new Waypoint(new Vector3(0, 0, 0), new Vector3(0, 0, 0), 0));
-        waypoints.Add(new Waypoint(new Vector3(0, 0, 30), new Vector3(0, 0, 0), 300));
-        waypoints.Add(new Waypoint(new Vector3(0, 0, 70), new Vector3(-1, 0, 0), 600));
-        waypoints.Add(new Waypoint(new Vector3(0, 0, 71), new Vector3(-3, 0, 0), 601));
-        waypoints.Add(new Waypoint(new Vector3(0, 0, 72), new Vector3(-7, 0, 0), 602));
-        waypoints.Add(new Waypoint(new Vector3(0, 0, 73), new Vector3(-12, 0, 0), 603));
-        waypoints.Add(new Waypoint(new Vector3(0, 0, 74), new Vector3(-15, 0, 0), 604));
-        waypoints.Add(new Waypoint(new Vector3(0, 20, 130), new Vector3(0, 0, 0), 800));
+    protected void Start () {
+        windVelocity = new Vector2(-0.5f, 0f);
+        aircraftHandler = GetComponentInChildren<AircraftHandler>();
+        pathHandler = GetComponentInChildren<PathHandler>();
+        interactions = new List<Interaction>();
 
-        airplane = GetComponentInChildren<Airplane>();
-        path = GetComponentInChildren<Path>();
-        updatePath();
-        resetSimulator();
+        // fake interactions
+        AddInteraction(new Interaction(0, 1, 0));
+        AddInteraction(new Interaction(20, 1, 1000));
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
-    private void updatePath() {
-        path.updateWaypoints(waypoints.ToArray());
+    protected void UpdatePath() {
+        pathHandler.updateWaypoints(waypoints);
     }
 
-    private void resetSimulator() {
-		current = waypoints[0];
-		next = waypoints[1];
-        time = 0;
-        item = 1;
+    //void Update() {
+    //    if (time > 400) {
+            RemoveInteraction(interactions[1]);
+    //    }
+    //}
+
+    protected void CalculateWaypoints() {
+        waypoints = FlightEngine.CalculateWaypoints(aircraftHandler.GetAircraft(), interactions, windVelocity, 0.02f, 5000);
     }
 
-    private void FixedUpdate() {
+    protected void FixedUpdate() {
         if (time >= next.time) {
             item++;
             if (item >= waypoints.Count) {
-                resetSimulator();
+                ResetSimulator();
             } else {
 				current = next;
 				next = waypoints[item];
@@ -62,8 +57,31 @@ public class Simulation : MonoBehaviour {
 
         Vector3 newPosition = current.position + ((time - current.time) * segment);
         Vector3 newRotation = current.rotation;
-        airplane.reposition(newPosition, newRotation);
+        aircraftHandler.Reposition(newPosition, newRotation);
 
         time++;
+    }
+
+    public void ResetSimulator() {
+        current = waypoints[0];
+        next = waypoints[1];
+        time = 0;
+        item = 1;
+    }
+
+    public void AddInteraction(Interaction interaction) {
+        interactions.Add(interaction);
+        Recalculate();
+    }
+
+    public void RemoveInteraction(Interaction interaction) {
+        interactions.Remove(interaction);
+        Recalculate();
+    }
+
+    public void Recalculate() {
+        CalculateWaypoints();
+        UpdatePath();
+        ResetSimulator();
     }
 }
