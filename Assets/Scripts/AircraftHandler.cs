@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class AircraftHandler : MonoBehaviour {
-    Aircraft aircraft;
+    protected Aircraft aircraft;
+    protected List<Waypoint> waypoints;
+    protected int time;
 
-    public GameObject smallAircraft;
+    protected GameObject smallAircraft;
 
     void Start() {
         smallAircraft = GameObject.Find("Small Passenger Plane");
@@ -18,9 +20,37 @@ public class AircraftHandler : MonoBehaviour {
         return aircraft;
     }
 
-    public void Reposition(Vector3 position, Vector3 rotation) {
+    public void SetWaypoints(List<Waypoint> waypoints) {
+        this.waypoints = waypoints;
+        UpdatePosition(time);
+    }
+
+    protected void Reposition(Vector3 position, Vector3 rotation) {
         position.z = position.z / 2f;
         transform.localPosition = position;
         transform.rotation = Quaternion.Euler(rotation);
+    }
+
+    public void UpdatePosition(int time) {
+        this.time = time;
+        Waypoint prev = new Waypoint(new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), 0);
+        Waypoint next = null;
+
+        waypoints.ForEach(delegate(Waypoint waypoint) {
+            if (waypoint.time <= time) {
+                prev = waypoint;
+            }
+            else if (waypoint.time > time && next == null){
+                next = waypoint;
+            }
+        });
+
+        float deltaTime = next.time - prev.time;
+        Vector3 deltaPosition = next.position - prev.position;
+        Vector3 segment = deltaPosition / deltaTime;
+
+        Vector3 newPosition = prev.position + ((time - prev.time) * segment);
+        Vector3 newRotation = prev.rotation;
+        Reposition(newPosition, newRotation);
     }
 }
