@@ -108,7 +108,7 @@ public static class FlightEngine {
         List<Interaction> interpolatedInteractions = InterpolateInteractions(interactions, steps);
 
         // add default position and rotation to start
-        waypoints.Add(new Waypoint(position, rotation, 0));
+        waypoints.Add(new Waypoint(position, rotation, velocity, 0));
 
         for (int i = 1; i < steps; i++) {
             pitch = interpolatedInteractions[i].pitch;
@@ -147,13 +147,14 @@ public static class FlightEngine {
 
             waypoints.Add(new Waypoint(position,
                                        rotation,
+                                       velocity,
                                        new Vector3(0f, drag.y, drag.x),
                                        new Vector3(0f, lift.y, lift.x),
                                        new Vector3(0f, gravity.y, gravity.x),
                                        new Vector3(0f, thrust.y, thrust.x),
                                        i));
         }
-
+        Debug.Log("Waypoints calculated");
         return waypoints;
     }
 }

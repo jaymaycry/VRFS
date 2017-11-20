@@ -8,10 +8,9 @@ public class PathHandler : MonoBehaviour {
     List<Interaction> interactions;
 
 	// Use this for initialization
-	void Start () {
-        lineRenderer = gameObject.GetComponent<LineRenderer>();
+	public void Start () {
+        lineRenderer = GameObject.Find("Path").GetComponent<LineRenderer>();
         interactions = new List<Interaction>();
-
 
         // fake interactions
         AddInteraction(new Interaction(0, 1, 0));

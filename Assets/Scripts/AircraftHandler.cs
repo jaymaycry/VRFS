@@ -7,10 +7,11 @@ public class AircraftHandler : MonoBehaviour {
     protected List<Waypoint> waypoints;
     protected int time;
 
+    // aircraft models
     protected GameObject smallAircraft;
 
-    void Start() {
-        smallAircraft = GameObject.Find("Small Passenger Plane");
+    public void Start() {
+        smallAircraft = GameObject.Find("C");
         aircraft = new Aircraft("A380", 0.492, 0.01523, 846, 492000, 311000, 4, smallAircraft);
     }
 
@@ -33,7 +34,7 @@ public class AircraftHandler : MonoBehaviour {
 
     public void UpdatePosition(int time) {
         this.time = time;
-        Waypoint prev = new Waypoint(new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), 0);
+        Waypoint prev = new Waypoint(new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), 0);
         Waypoint next = null;
 
         waypoints.ForEach(delegate(Waypoint waypoint) {
@@ -45,11 +46,16 @@ public class AircraftHandler : MonoBehaviour {
             }
         });
 
-        float deltaTime = next.time - prev.time;
-        Vector3 deltaPosition = next.position - prev.position;
-        Vector3 segment = deltaPosition / deltaTime;
+        Vector3 newPosition = prev.position;
 
-        Vector3 newPosition = prev.position + ((time - prev.time) * segment);
+        if (prev != null && next != null) {
+            float deltaTime = next.time - prev.time;
+            Vector3 deltaPosition = next.position - prev.position;
+            Vector3 segment = deltaPosition / deltaTime;
+
+            newPosition = prev.position + ((time - prev.time) * segment);
+        }
+
         Vector3 newRotation = prev.rotation;
         Reposition(newPosition, newRotation);
     }

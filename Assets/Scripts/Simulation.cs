@@ -3,21 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Simulation : MonoBehaviour {
-    public Vector2 windVelocity;
     public List<Waypoint> waypoints;
     public AircraftHandler aircraftHandler;
     public PathHandler pathHandler;
+    // TODO: windhandler
+    public Vector2 windVelocity;
     public int time;
+    public int length;
     public bool play;
 
 
 	// Use this for initialization
-    protected void Start () {
-        windVelocity = new Vector2(-0.5f, 0f);
+    public void Start () {
         aircraftHandler = GetComponentInChildren<AircraftHandler>();
         pathHandler = GetComponentInChildren<PathHandler>();
-
         waypoints = new List<Waypoint>();
+        windVelocity = new Vector2(-0.5f, 0f);
+        length = 5000;
 
         // register event listener
         EventManager.OnChange += Recalculate;
@@ -40,7 +42,7 @@ public class Simulation : MonoBehaviour {
     }
 
     protected void CalculateWaypoints() {
-        waypoints = FlightEngine.CalculateWaypoints(aircraftHandler.GetAircraft(), pathHandler.GetInteractions(), windVelocity, 0.02f, 5000);
+        waypoints = FlightEngine.CalculateWaypoints(aircraftHandler.GetAircraft(), pathHandler.GetInteractions(), windVelocity, 0.02f, this.length);
     }
 
     protected void FixedUpdate() {
@@ -57,5 +59,23 @@ public class Simulation : MonoBehaviour {
     protected void ResetSimulator() {
         time = 0;
         //play = false;
+    }
+
+    public void Play() {
+        this.play = true;
+    }
+
+    public void Pause() {
+        this.play = false;
+    }
+
+    public void SetTime(int time) {
+        this.time = time;
+        UpdateAircraftHandler();
+    }
+
+    public void SetLength(int length) {
+        this.length = length;
+        Recalculate();
     }
 }
