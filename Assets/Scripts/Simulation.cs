@@ -10,24 +10,35 @@ public class Simulation : MonoBehaviour {
     public Vector2 windVelocity;
     public int time;
     public int length;
+    public float deltaTime;
     public bool play;
+    public float scale;
 
 
-	// Use this for initialization
-    public void Start () {
+    // Use this for initialization
+    public void Start() {
         aircraftHandler = GetComponentInChildren<AircraftHandler>();
         pathHandler = GetComponentInChildren<PathHandler>();
         waypoints = new List<Waypoint>();
         windVelocity = new Vector2(-0.5f, 0f);
         length = 5000;
+        deltaTime = 0.02f;
+        scale = 0.01f;
 
         // register event listener
         EventManager.OnChange += Recalculate;
 
         Recalculate();
-	}
+    }
+
+
+    protected void AdjustScale()
+    {
+        this.transform.localScale = new Vector3(scale, scale, scale);
+    }
 
     protected void Recalculate() {
+        AdjustScale();
         CalculateWaypoints();
         UpdatePathHandler();
         UpdateAircraftHandler();
@@ -42,7 +53,7 @@ public class Simulation : MonoBehaviour {
     }
 
     protected void CalculateWaypoints() {
-        waypoints = FlightEngine.CalculateWaypoints(aircraftHandler.GetAircraft(), pathHandler.GetInteractions(), windVelocity, 0.02f, this.length);
+        waypoints = FlightEngine.CalculateWaypoints(aircraftHandler.GetAircraft(), pathHandler.GetInteractions(), windVelocity, deltaTime, length);
     }
 
     protected void FixedUpdate() {

@@ -27,7 +27,6 @@ public class AircraftHandler : MonoBehaviour {
     }
 
     protected void Reposition(Vector3 position, Vector3 rotation) {
-        position.z = position.z / 2f;
         transform.localPosition = position;
         transform.rotation = Quaternion.Euler(rotation);
     }
