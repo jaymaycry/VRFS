@@ -189,8 +189,8 @@ public static class FlightEngineRunge
             cw = calculateCW(acceleration_k3, interaction, aircraft);
             Vector3d velocity_k4 = calculateVelocity(aircraft, interaction, position, velocity_k3, windVelocity, ca, cw, roh, deltaTime);
 
-            resultingforce = deltaTime / 6 * (acceleration_k1 + 2 * acceleration_k2 + 2 * acceleration_k3 + acceleration_k4);
-            velocity = deltaTime / 6 * (velocity_k1 + 2 * velocity_k2 + 2 * velocity_k3 + velocity_k4);
+            resultingforce = resultingforce + deltaTime / 6 * (acceleration_k1 + 2 * acceleration_k2 + 2 * acceleration_k3 + acceleration_k4);
+            velocity = velocity + deltaTime / 6 * (velocity_k1 + 2 * velocity_k2 + 2 * velocity_k3 + velocity_k4);
             Debug.Log(velocity);
             position = position + velocity * deltaTime;
 

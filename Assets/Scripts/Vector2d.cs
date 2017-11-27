@@ -56,7 +56,46 @@ namespace UnityEngine
                 return Mathd.Sqrt(this.x * this.x + this.y * this.y);
             }
         }
-        
+
+        public double sqrMagnitude
+        {
+            get
+            {
+                return this.x * this.x + this.y * this.y;
+            }
+        }
+
+        public static Vector2d zero
+        {
+            get
+            {
+                return new Vector2d(0.0d, 0.0d);
+            }
+        }
+
+        public static Vector2d one
+        {
+            get
+            {
+                return new Vector2d(1d, 1d);
+            }
+        }
+
+        public static Vector2d up
+        {
+            get
+            {
+                return new Vector2d(0.0d, 1d);
+            }
+        }
+
+        public static Vector2d right
+        {
+            get
+            {
+                return new Vector2d(1d, 0.0d);
+            }
+        }
 
         public Vector2d(double x, double y)
         {
@@ -119,7 +158,48 @@ namespace UnityEngine
             this.x = new_x;
             this.y = new_y;
         }
-        
+
+        public static Vector2d Lerp(Vector2d from, Vector2d to, double t)
+        {
+            t = Mathd.Clamp01(t);
+            return new Vector2d(from.x + (to.x - from.x) * t, from.y + (to.y - from.y) * t);
+        }
+
+        public static Vector2d MoveTowards(Vector2d current, Vector2d target, double maxDistanceDelta)
+        {
+            Vector2d vector2 = target - current;
+            double magnitude = vector2.magnitude;
+            if (magnitude <= maxDistanceDelta || magnitude == 0.0d)
+                return target;
+            else
+                return current + vector2 / magnitude * maxDistanceDelta;
+        }
+
+        public static Vector2d Scale(Vector2d a, Vector2d b)
+        {
+            return new Vector2d(a.x * b.x, a.y * b.y);
+        }
+
+        public void Scale(Vector2d scale)
+        {
+            this.x *= scale.x;
+            this.y *= scale.y;
+        }
+
+        public void Normalize()
+        {
+            double magnitude = this.magnitude;
+            if (magnitude > 9.99999974737875E-06)
+                this = this / magnitude;
+            else
+                this = Vector2d.zero;
+        }
+
+
+        public override int GetHashCode()
+        {
+            return this.x.GetHashCode() ^ this.y.GetHashCode() << 2;
+        }
 
         public override bool Equals(object other)
         {
@@ -136,6 +216,43 @@ namespace UnityEngine
         {
             return lhs.x * rhs.x + lhs.y * rhs.y;
         }
-        
+
+        public static double Angle(Vector2d from, Vector2d to)
+        {
+            return Mathd.Acos(Mathd.Clamp(Vector2d.Dot(from.normalized, to.normalized), -1d, 1d)) * 57.29578d;
+        }
+
+        public static double Distance(Vector2d a, Vector2d b)
+        {
+            return (a - b).magnitude;
+        }
+
+        public static Vector2d ClampMagnitude(Vector2d vector, double maxLength)
+        {
+            if (vector.sqrMagnitude > maxLength * maxLength)
+                return vector.normalized * maxLength;
+            else
+                return vector;
+        }
+
+        public static double SqrMagnitude(Vector2d a)
+        {
+            return (a.x * a.x + a.y * a.y);
+        }
+
+        public double SqrMagnitude()
+        {
+            return (this.x * this.x + this.y * this.y);
+        }
+
+        public static Vector2d Min(Vector2d lhs, Vector2d rhs)
+        {
+            return new Vector2d(Mathd.Min(lhs.x, rhs.x), Mathd.Min(lhs.y, rhs.y));
+        }
+
+        public static Vector2d Max(Vector2d lhs, Vector2d rhs)
+        {
+            return new Vector2d(Mathd.Max(lhs.x, rhs.x), Mathd.Max(lhs.y, rhs.y));
+        }
     }
 }
