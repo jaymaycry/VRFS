@@ -26,5 +26,6 @@ public class Interaction {
 
     public void SetTime(int time) {
         this.time = time;
+        EventManager.InteractionsChanged();
     }
 }

@@ -77,7 +77,7 @@ public class PathHandler : MonoBehaviour {
             }
 
             // set position and name
-            marker.transform.position = position;
+            marker.transform.localPosition = position;
             marker.transform.localScale = new Vector3(3f, 3f, 3f);
             marker.transform.name = "Interaction_" + i;
         }
