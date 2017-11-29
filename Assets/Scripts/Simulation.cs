@@ -42,7 +42,7 @@ public class Simulation : MonoBehaviour {
     }
 
     protected void CalculateWaypoints() {
-        List<Waypoint> waypoints2 = FlightEngine.CalculateWaypoints(aircraftHandler.GetAircraft(), pathHandler.GetInteractions(), windVelocity, 0.02f, this.length);
+        List<Waypoint> waypoints2 = FlightEngine.CalculateWaypoints(aircraftHandler.GetAircraft(), pathHandler.GetInteractions(), windVelocity, 0.0002f, this.length);
         waypoints = FlightEngineRunge.CalculateWaypoints(aircraftHandler.GetAircraft(), pathHandler.GetInteractions(), new Vector2d ((double)windVelocity.x, (double)windVelocity.y), 1f, this.length);
     }
 

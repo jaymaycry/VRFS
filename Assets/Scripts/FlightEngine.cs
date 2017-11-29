@@ -88,6 +88,17 @@ public static class FlightEngine {
         return interpolated;
     }
 
+    //TODO alle Roh() durch Roh(h, t) ersetzten
+    public static double Roh()
+    {
+        return 1.2;
+    }
+    public static double Roh(double h, double t)
+    {
+        h = h + 60 * (t-20); //t = 20°C ist der normalfall, bei abweichung berechnen wir die höhe relativ zur gegebenen Temperatur
+        return 1.247015 * Mathd.Exp(-0.000104 * h);
+    }
+
     public static List<Waypoint> CalculateWaypoints(Aircraft aircraft, List<Interaction> interactions, Vector2 windVelocity, float deltaTime, int steps)
     {
         List<Waypoint> waypoints = new List<Waypoint>();
@@ -102,7 +113,8 @@ public static class FlightEngine {
         double cw = aircraft.cW0;
         double ca = aircraft.cA0;
         //TODO Luftdichte berechnen abhängig Temperatur und Höhe und Luftfeuchtigkeit
-        double roh = 1.2;
+        
+
 
         // interpolate instructions
         List<Interaction> interpolatedInteractions = InterpolateInteractions(interactions, steps);
@@ -116,8 +128,8 @@ public static class FlightEngine {
 
             var aircraftWindVelocity = new Vector2(-velocity.z, -velocity.y);
 
-            Vector2 drag = CalcDrag(aircraft, windVelocity, aircraftWindVelocity, cw, roh);
-            Vector2 lift = CalcLift(aircraft, windVelocity, aircraftWindVelocity, ca, roh);
+            Vector2 drag = CalcDrag(aircraft, windVelocity, aircraftWindVelocity, cw, Roh());
+            Vector2 lift = CalcLift(aircraft, windVelocity, aircraftWindVelocity, ca, Roh());
             Vector2 gravity = CalcGravity(aircraft.mass);
             Vector2 thrust = CalcThrust(aircraft, pitch, thrustFactor);
 
