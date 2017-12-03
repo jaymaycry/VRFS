@@ -10,7 +10,8 @@ public class InteractionMarker : VRTK_InteractableObject {
     Simulation sim;
 
 	// Use this for initialization
-	protected void Awake () {
+	protected override void Awake () {
+        base.Awake();
         ui = GameObject.Find("UI").GetComponent<UIHandler>().interactionUI;
     }
 
@@ -24,5 +25,38 @@ public class InteractionMarker : VRTK_InteractableObject {
         this.sim = sim;
     }
 
-    public override void StartUsing(VRTK_InteractUse usingObject)    {        base.StartUsing(usingObject);        base.ToggleHighlight(true);        ui.Init(interaction, sim);        ui.Show();    }    public override void StopUsing(VRTK_InteractUse usingObject)    {        base.StopUsing(usingObject);        base.ToggleHighlight(false);        ui.Hide();    }
+    public override void StartUsing(VRTK_InteractUse usingObject)    {        base.StartUsing(usingObject);        base.ToggleHighlight(true);        ui.Init(this, sim);        ui.Show();    }    public override void StopUsing(VRTK_InteractUse usingObject)    {        base.StopUsing(usingObject);        base.ToggleHighlight(false);        ui.Hide();    }
+
+    public double GetPitch()
+    {
+        return this.interaction.pitch;
+    }
+
+    public double GetThrust()
+    {
+        return this.interaction.thrust;
+    }
+
+    public int GetTime()
+    {
+        return this.interaction.time;
+    }
+
+    public void SetPitch(double pitch)
+    {
+        this.interaction.pitch = pitch;
+        sim.InteractionsChanged();
+    }
+
+    public void SetThrust(double thrust)
+    {
+        this.interaction.thrust = thrust;
+        sim.InteractionsChanged();
+    }
+
+    public void SetTime(int time)
+    {
+        this.interaction.time = time;
+        sim.InteractionsChanged();
+    }
 }

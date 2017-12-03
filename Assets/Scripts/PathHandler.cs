@@ -9,7 +9,8 @@ public class PathHandler : MonoBehaviour {
     List<Interaction> interactions;
 
 	// Use this for initialization
-	public void Start () {
+	public void Start ()
+    {
         lineRenderer = GameObject.Find("Path").GetComponent<LineRenderer>();
         sim = this.transform.parent.GetComponent<Simulation>();
         interactions = new List<Interaction>();
@@ -19,42 +20,47 @@ public class PathHandler : MonoBehaviour {
         AddInteraction(new Interaction(20, 1, 1000));
 	}
 	
-    public void SetWaypoints(List<Waypoint> waypoints) {
+    public void SetWaypoints(List<Waypoint> waypoints)
+    {
         this.waypoints = waypoints;
         RenderPath();
         RenderInteractions();
     }
 
-    public List<Interaction> GetInteractions() {
+    public List<Interaction> GetInteractions()
+    {
         return this.interactions;
     }
 
-    public void AddInteraction(Interaction interaction) {
+    public void AddInteraction(Interaction interaction)
+    {
         interactions.Add(interaction);
         interactions.Sort(delegate(Interaction x, Interaction y) {
             return x.time.CompareTo(y.time);
         });
-        EventManager.InteractionsChanged();
+        sim.InteractionsChanged();
     }
 
     public void RemoveInteraction(Interaction interaction) {
         interactions.Remove(interaction);
-        EventManager.InteractionsChanged();
+        sim.InteractionsChanged();
     }
 
-    protected void RenderPath() {
+    protected void RenderPath()
+    {
         Waypoint[] waypointsArray = waypoints.ToArray();
-        lineRenderer.startWidth = sim.scale;
-        lineRenderer.endWidth = sim.scale;
+        lineRenderer.startWidth = Simulation.scale;
+        lineRenderer.endWidth = Simulation.scale;
         lineRenderer.positionCount = waypointsArray.Length;
         for (int i = 0; i < waypointsArray.Length; i++)
         {
             Vector3 position = waypointsArray[i].position;
-            lineRenderer.SetPosition(i, position * sim.scale);
+            lineRenderer.SetPosition(i, position);
         }
     }
 
-    protected void RenderInteractions() {
+    protected void RenderInteractions()
+    {
         Interaction[] interactionArray = interactions.ToArray();
         for(int i = 0; i < interactionArray.Length; i++) {
             Interaction interaction = interactionArray[i];

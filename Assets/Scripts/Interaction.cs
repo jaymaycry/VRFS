@@ -13,19 +13,4 @@ public class Interaction {
         this.thrust = thrust;
         this.time = time;
     }
-
-    public void SetPitch(double pitch) {
-        this.pitch = pitch;
-        EventManager.InteractionsChanged();
-    }
-
-    public void SetThrust(double thrust) {
-        this.thrust = thrust;
-        EventManager.InteractionsChanged();
-    }
-
-    public void SetTime(int time) {
-        this.time = time;
-        EventManager.InteractionsChanged();
-    }
 }

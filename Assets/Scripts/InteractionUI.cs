@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class InteractionUI : MonoBehaviour {
+public class InteractionUI : MonoBehaviour
+{
     Simulation sim;
-    Interaction interaction;
+    InteractionMarker interaction;
 
     Slider pitchSlider;
     Text pitchValue;
@@ -20,7 +21,8 @@ public class InteractionUI : MonoBehaviour {
 
 
     // Use this for initialization
-    protected void Awake () {
+    protected void Awake()
+    {
         pitchSlider = GameObject.Find("UI/Interaction/Panel/Pitch/Slider").GetComponent<Slider>();
         pitchValue = GameObject.Find("UI/Interaction/Panel/Pitch/Value").GetComponent<Text>();
 
@@ -33,7 +35,7 @@ public class InteractionUI : MonoBehaviour {
         timeHigher = GameObject.Find("UI/Interaction/Panel/Time/HigherBound").GetComponent<Text>();
     }
 
-    public void Init(Interaction interaction, Simulation sim)
+    public void Init(InteractionMarker interaction, Simulation sim)
     {
         this.interaction = interaction;
         this.sim = sim;
@@ -42,12 +44,12 @@ public class InteractionUI : MonoBehaviour {
     public void Show()
     {
         Debug.Log("show interaction ui");
-        pitchSlider.value = (float)interaction.pitch;
-        thrustSlider.value = (float)interaction.thrust * 100f;
+        pitchSlider.value = (float)interaction.GetPitch();
+        thrustSlider.value = (float)interaction.GetThrust() * 100f;
 
-        timeHigher.text = Convert.ToString(sim.length * sim.deltaTime) + "s";
-        timeSlider.value = (float)interaction.time * sim.deltaTime;
-        timeSlider.maxValue = sim.length * sim.deltaTime;
+        timeHigher.text = Convert.ToString(Simulation.length * Simulation.deltaTime) + "s";
+        timeSlider.value = (float)interaction.GetTime() * Simulation.deltaTime;
+        timeSlider.maxValue = Simulation.length * Simulation.deltaTime;
 
         this.gameObject.SetActive(true);
     }
@@ -76,6 +78,6 @@ public class InteractionUI : MonoBehaviour {
     {
         Debug.Log("time changed");
         timeValue.text = Convert.ToString(newTime) + "s";
-        interaction.SetTime((int) (newTime / sim.deltaTime));
+        interaction.SetTime((int)(newTime / Simulation.deltaTime));
     }
 }
