@@ -46,7 +46,7 @@ public class InteractionUI : MonoBehaviour {
         thrustSlider.value = (float)interaction.thrust * 100f;
 
         timeHigher.text = Convert.ToString(sim.length * sim.deltaTime) + "s";
-        timeSlider.value = (float)interaction.time;
+        timeSlider.value = (float)interaction.time * sim.deltaTime;
         timeSlider.maxValue = sim.length * sim.deltaTime;
 
         this.gameObject.SetActive(true);
