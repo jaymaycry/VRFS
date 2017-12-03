@@ -145,7 +145,7 @@ public static class FlightEngineRunge
         Vector3d velocity = new Vector3d(0d, 0d, 0d);
         Vector3d position = new Vector3d(0d, 0d, 0d);
         Vector3d rotation = new Vector3d(0d, 0d, 0d);
-        double pitch = 0;
+        double pitch = 10*Mathd.PI/180;
         bool grounded = true;
         // double thrustFactor = 0;
         double angleOfAttack = 0;
@@ -166,11 +166,15 @@ public static class FlightEngineRunge
         for (int i = 1; i < steps; i++)
         {
             Interaction interaction = interpolatedInteractions[i];
-            // Vector2d resultingForce = 
+
+            
+
+
+            Vector2d resultingForce = calculateResultingForce(aircraft, interaction, position, velocity, windVelocity, ca, cw, roh, deltaTime);
 
 
             // position = position + velocity * deltaTime;
-            Vector2d acceleration_k1 = resultingforce * (1/aircraft.mass);
+            Vector3d acceleration_k1 = new Vector3d (0, resultingForce.y * (1/aircraft.mass), resultingForce.x*(1/aircraft.mass));
             Vector3d velocity_k1 = velocity;
 
             /* a_k1 = F * 1/m
@@ -192,39 +196,46 @@ public static class FlightEngineRunge
              * (x,y) = v * deltaT
              */
 
-
-            Vector2d acceleration_k2 = calculateResultingForce(aircraft, interaction, position, velocity_k1, windVelocity, ca, cw, roh, deltaTime / 2) * (1/aircraft.mass);
-            ca = calculateCA(acceleration_k2, interaction, aircraft);
-            cw = calculateCW(acceleration_k2, interaction, aircraft);
+            Vector2d help_2 = calculateResultingForce(aircraft, interaction, position, velocity_k1 + deltaTime / 2 * acceleration_k1, windVelocity, ca, cw, roh, deltaTime / 2) * (1 / aircraft.mass);
+            Vector3d acceleration_k2 = new Vector3d(0, help_2.y, help_2.x);
             Vector3d velocity_k2 = calculateVelocity(aircraft, velocity_k1, acceleration_k2, deltaTime /2);
             // Vector3d velocity_k2 = calculateVelocity(aircraft, interaction, position, velocity_k1, windVelocity, ca, cw, roh, deltaTime / 2);
 
             //Debug.Log(acceleration_k2);
             //Debug.Log(velocity_k2);
 
-            Vector2d acceleration_k3 = calculateResultingForce(aircraft, interaction, position, velocity_k2, windVelocity, ca, cw, roh, deltaTime / 2) * (1 / aircraft.mass);
-            ca = calculateCA(acceleration_k3, interaction, aircraft);
-            cw = calculateCW(acceleration_k3, interaction, aircraft);
+            Vector2d help_3= calculateResultingForce(aircraft, interaction, position, velocity_k1 + deltaTime/2 * acceleration_k2, windVelocity, ca, cw, roh, deltaTime / 2) * (1 / aircraft.mass);
+            Vector3d acceleration_k3 = new Vector3d(0, help_3.y, help_3.x);
             Vector3d velocity_k3 = calculateVelocity(aircraft, velocity_k2, acceleration_k3, deltaTime /2);
 
-            Vector2d acceleration_k4 = calculateResultingForce(aircraft, interaction, position, velocity_k3, windVelocity, ca, cw, roh, deltaTime / 2) * (1 / aircraft.mass);
-            ca = calculateCA(acceleration_k3, interaction, aircraft);
-            cw = calculateCW(acceleration_k3, interaction, aircraft);
+
+
+            Vector2d help_4= calculateResultingForce(aircraft, interaction, position, velocity_k1 + deltaTime * acceleration_k3, windVelocity, ca, cw, roh, deltaTime) * (1 / aircraft.mass);
+            Vector3d acceleration_k4 = new Vector3d(0, help_4.y, help_4.x);
             Vector3d velocity_k4 = calculateVelocity(aircraft, velocity_k3, acceleration_k4, deltaTime); ;
 
-            resultingforce = resultingforce + deltaTime / 6 * (acceleration_k1 + 2 * acceleration_k2 + 2 * acceleration_k3 + acceleration_k4);
+            //resultingforce = resultingforce + deltaTime / 6 * (acceleration_k1 + 2 * acceleration_k2 + 2 * acceleration_k3 + acceleration_k4);
             //velocity = velocity + deltaTime / 6 * (velocity_k1 + 2 * velocity_k2 + 2 * velocity_k3 + velocity_k4);
-            Vector2d acceleration = resultingforce * 1 / aircraft.mass;
-            velocity = acceleration * deltaTime;
+            velocity = velocity_k1 + deltaTime / 6 * (acceleration_k1 + 2 * acceleration_k2 + 2 * acceleration_k3 + acceleration_k4);
             Debug.Log(velocity);
             position = position + velocity * deltaTime;
 
 
+
+
+
+
+
+
+
+
+
+
             rotation = new Vector3d((float)-pitch, 0f, 0f);
             // Vector2d resultingforce = calculateResultingForce(aircraft, interpolatedInteractions[i], velocity, windVelocity, ca, cw, roh, deltaTime);
-            // angleOfAttack = CalcAngleOfAttack(pitch, resultingforce);
-            // cw = aircraft.CalcCW(angleOfAttack);
-            // ca = aircraft.CalcCA(angleOfAttack);
+            angleOfAttack = CalcAngleOfAttack(pitch, resultingforce);
+            cw = aircraft.CalcCW(angleOfAttack);
+            ca = aircraft.CalcCA(angleOfAttack);
 
             positionF = new Vector3((float)position.x, (float)position.y, (float)position.z);
             rotationF = new Vector3((float)rotation.x, (float)rotation.y, (float)rotation.z);
