@@ -51,8 +51,8 @@ public class Aircraft {
 
     // TODO calcCA for other plane types - subclasses
     public double CalcCA(double angleOfAttack) {
-        return 0.0549 * angleOfAttack + cA0;
-    }
+		return 0.0549 * angleOfAttack + cA0;
+	}
 
     // TODO calcCW for other plane types - subclasses
     public double CalcCW(double angleOfAttack) {
