@@ -95,7 +95,7 @@ public static class FlightEngine {
     }
     public static double Roh(double h, double t)
     {
-        h = h + 60 * (t-20); //t = 20°C ist der normalfall, bei abweichung berechnen wir die höhe relativ zur gegebenen Temperatur
+        h = h + 153.85 * (t-20); //t = 20°C ist der normalfall, bei abweichung berechnen wir die höhe relativ zur gegebenen Temperatur
         return 1.247015 * Mathd.Exp(-0.000104 * h);
     }
 
