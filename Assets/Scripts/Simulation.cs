@@ -8,11 +8,11 @@ public class Simulation : MonoBehaviour {
     public PathHandler pathHandler;
     // TODO: windhandler
     public Vector2 windVelocity;
-    public static int time;
-    public static int length;
-    public static float deltaTime;
-    public static bool play;
-    public static float scale;
+    public static int time = 0;
+    public static int length = 5000;
+    public static float deltaTime = 0.02f;
+    public static bool play = false;
+    public static float scale = 0.01f;
 
 
     // Use this for initialization
@@ -21,9 +21,6 @@ public class Simulation : MonoBehaviour {
         pathHandler = GetComponentInChildren<PathHandler>();
         waypoints = new List<Waypoint>();
         windVelocity = new Vector2(-0.5f, 0f);
-        length = 5000;
-        deltaTime = 0.02f;
-        scale = 0.01f;
 
         SetScale(scale);
         Recalculate();
@@ -33,6 +30,7 @@ public class Simulation : MonoBehaviour {
     {
         scale = newScale;
         this.transform.localScale = new Vector3(scale, scale, scale);
+        Debug.Log("Scale set");
     }
 
     protected void Recalculate() {

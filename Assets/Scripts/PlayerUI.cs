@@ -26,15 +26,20 @@ public class PlayerUI : MonoBehaviour {
         timeHigher = GameObject.Find("UI/Player/Panel/Time/HigherBound").GetComponent<Text>();
 
         simParent = GameObject.Find("Simulations");
+
+
     }
 
     public void Update()
     {
-        
         timeHigher.text = Convert.ToString(Simulation.length * Simulation.deltaTime) + "s";
-        timeSlider.value = (float)Simulation.time * Simulation.deltaTime;
-        timeSlider.maxValue = Simulation.length * Simulation.deltaTime;
-        scaleSlider.value = 1f / Simulation.scale;
+        // timeSlider.value = (float)Simulation.time * Simulation.deltaTime;
+        timeSlider.maxValue = (float)Simulation.length * Simulation.deltaTime;
+
+
+        float scale = Mathf.Pow(Simulation.scale, -1f);
+        scaleValue.text = "1/" + Convert.ToString(scale);
+        scaleSlider.value = scale;
     }
 
     public void Show()
@@ -52,11 +57,13 @@ public class PlayerUI : MonoBehaviour {
     public void Play()
     {
         Simulation.Play();
+        Debug.Log("Play pressed.");
     }
 
     public void Pause()
     {
         Simulation.Pause();
+        Debug.Log("Pause pressed.");
     }
 
     public void Rewind()
@@ -67,6 +74,7 @@ public class PlayerUI : MonoBehaviour {
         } else {
             Simulation.SetTime(currentTime - 15);
         }
+        Debug.Log("Rewind pressed.");
     }
 
     public void Forward()
@@ -81,15 +89,17 @@ public class PlayerUI : MonoBehaviour {
         {
             Simulation.SetTime(length);
         }
+        Debug.Log("Forward pressed.");
     }
 
     public void ScaleChanged(float newScale)
     {
         Debug.Log("scale changed");
+        Debug.Log(newScale);
         scaleValue.text = "1/" + Convert.ToString(newScale);
 
         foreach (Simulation sim in simParent.GetComponentsInChildren<Simulation>()) {
-            sim.SetScale(1 / newScale);
+            sim.SetScale(1f / newScale);
         }
     }
 
