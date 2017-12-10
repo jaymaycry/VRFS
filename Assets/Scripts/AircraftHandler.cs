@@ -12,7 +12,7 @@ public class AircraftHandler : MonoBehaviour {
 
     public void Start() {
         smallAircraft = GameObject.Find("C");
-        aircraft = new Aircraft("A380", 0.492, 0.01523, 846, 492000, 311000, 4, smallAircraft);
+        aircraft = new Aircraft("A380", 0.11, 0.05, 0.45, 0.6, 3, 846, 492000, 311000, 4, smallAircraft);
     }
 
     // returns the active aircraft

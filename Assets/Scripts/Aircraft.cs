@@ -9,7 +9,10 @@ public class Aircraft {
 
     public string name;
     public double cW0;
+    public double cW1;
+    public double cW2;
     public double cA0;
+    public double cA1;
     // wing area in square meter
     public double wingArea;
     // mass in kg
@@ -23,7 +26,10 @@ public class Aircraft {
 
     public Aircraft(string name,
                     double cW0,
+                    double cW1,
+                    double cW2,
                     double cA0,
+                    double cA1,
                     double wingArea,
                     double mass,
                     double maxThrust,
@@ -51,12 +57,14 @@ public class Aircraft {
 
     // TODO calcCA for other plane types - subclasses
     public double CalcCA(double angleOfAttack) {
-        return 0.0549 * angleOfAttack + cA0;
+        //return 0.0549 * angleOfAttack + cA0;
+        return cA1 * angleOfAttack + cA0;
     }
 
     // TODO calcCW for other plane types - subclasses
     public double CalcCW(double angleOfAttack) {
-        return cW0 + 0.017 * Mathf.Pow((float)(CalcCA(angleOfAttack) - cA0), 2);
+        // return cW0 + 0.017 * Mathf.Pow((float)(CalcCA(angleOfAttack) - cA0), 2);
+        return cW0 + cW1 * angleOfAttack + cW2 * Mathd.Pow(angleOfAttack, 2);
     }
 
     public void SetCW(double cW0) {

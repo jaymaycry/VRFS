@@ -42,8 +42,8 @@ public class Simulation : MonoBehaviour {
     }
 
     protected void CalculateWaypoints() {
-        //waypoints = FlightEngine.CalculateWaypoints(aircraftHandler.GetAircraft(), pathHandler.GetInteractions(), windVelocity, 0.02f, this.length);
-        waypoints = FlightEngineRunge.CalculateWaypoints(aircraftHandler.GetAircraft(), pathHandler.GetInteractions(), new Vector2d ((double)windVelocity.x, (double)windVelocity.y), 0.02f, this.length);
+        waypoints = FlightEngine.CalculateWaypoints(aircraftHandler.GetAircraft(), pathHandler.GetInteractions(), windVelocity, 0.02f, this.length);
+        //waypoints = FlightEngineRunge.CalculateWaypoints(aircraftHandler.GetAircraft(), pathHandler.GetInteractions(), new Vector2d ((double)windVelocity.x, (double)windVelocity.y), 0.02f, this.length);
             for (int i = 0; i< this.length; i++)
             {
                 Vector3 test = waypoints[i].position;
