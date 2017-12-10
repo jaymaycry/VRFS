@@ -19,7 +19,7 @@ public class Simulation : MonoBehaviour {
         pathHandler = GetComponentInChildren<PathHandler>();
         waypoints = new List<Waypoint>();
         windVelocity = new Vector2(-0.5f, 0f);
-        length = 250;
+        length = 5000;
 
         // register event listener
         EventManager.OnChange += Recalculate;
@@ -42,8 +42,13 @@ public class Simulation : MonoBehaviour {
     }
 
     protected void CalculateWaypoints() {
-        List<Waypoint> waypoints2 = FlightEngine.CalculateWaypoints(aircraftHandler.GetAircraft(), pathHandler.GetInteractions(), windVelocity, 0.0002f, this.length);
-        waypoints = FlightEngineRunge.CalculateWaypoints(aircraftHandler.GetAircraft(), pathHandler.GetInteractions(), new Vector2d ((double)windVelocity.x, (double)windVelocity.y), 1f, this.length);
+        //waypoints = FlightEngine.CalculateWaypoints(aircraftHandler.GetAircraft(), pathHandler.GetInteractions(), windVelocity, 0.02f, this.length);
+        waypoints = FlightEngineRunge.CalculateWaypoints(aircraftHandler.GetAircraft(), pathHandler.GetInteractions(), new Vector2d ((double)windVelocity.x, (double)windVelocity.y), 0.02f, this.length);
+            for (int i = 0; i< this.length; i++)
+            {
+                Vector3 test = waypoints[i].position;
+                Debug.Log(test);
+            }
     }
 
     protected void FixedUpdate() {

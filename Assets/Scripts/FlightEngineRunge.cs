@@ -217,7 +217,7 @@ public static class FlightEngineRunge
             //resultingforce = resultingforce + deltaTime / 6 * (acceleration_k1 + 2 * acceleration_k2 + 2 * acceleration_k3 + acceleration_k4);
             //velocity = velocity + deltaTime / 6 * (velocity_k1 + 2 * velocity_k2 + 2 * velocity_k3 + velocity_k4);
             velocity = velocity_k1 + deltaTime / 6 * (acceleration_k1 + 2 * acceleration_k2 + 2 * acceleration_k3 + acceleration_k4);
-            Debug.Log(velocity);
+            
             position = position + velocity * deltaTime;
 
 
@@ -252,6 +252,7 @@ public static class FlightEngineRunge
                                        i));
         }
         Debug.Log("Waypoints calculated");
+        
         return waypoints;
     }
 }
