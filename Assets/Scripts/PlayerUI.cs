@@ -33,12 +33,14 @@ public class PlayerUI : MonoBehaviour {
 
         controllerEvents.TriggerPressed += new ControllerInteractionEventHandler(TriggerPressed);
         controllerEvents.TriggerReleased += new ControllerInteractionEventHandler(TriggerReleased);
+
+        Hide();
     }
 
     public void Update()
     {
         timeHigher.text = Convert.ToString(Simulation.length * Simulation.deltaTime) + "s";
-        // timeSlider.value = (float)Simulation.time * Simulation.deltaTime;
+        timeSlider.value = (float)Simulation.time * Simulation.deltaTime;
         timeSlider.maxValue = (float)Simulation.length * Simulation.deltaTime;
 
 
