@@ -3,9 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using VRTK;
+
 
 public class PlayerUI : MonoBehaviour {
     GameObject simParent;
+    VRTK_ControllerEvents controllerEvents;
 
     Slider scaleSlider;
     Text scaleValue;
@@ -16,7 +19,7 @@ public class PlayerUI : MonoBehaviour {
 
 
     // Use this for initialization
-    protected void Awake ()
+    protected void Awake()
     {
         scaleSlider = GameObject.Find("UI/Player/Panel/Scale/Slider").GetComponent<Slider>();
         scaleValue = GameObject.Find("UI/Player/Panel/Scale/Value").GetComponent<Text>();
@@ -26,8 +29,10 @@ public class PlayerUI : MonoBehaviour {
         timeHigher = GameObject.Find("UI/Player/Panel/Time/HigherBound").GetComponent<Text>();
 
         simParent = GameObject.Find("Simulations");
+        controllerEvents = GameObject.Find("RightController").GetComponent<VRTK_ControllerEvents>();
 
-
+        controllerEvents.TriggerPressed += new ControllerInteractionEventHandler(TriggerPressed);
+        controllerEvents.TriggerReleased += new ControllerInteractionEventHandler(TriggerReleased);
     }
 
     public void Update()
@@ -40,6 +45,16 @@ public class PlayerUI : MonoBehaviour {
         float scale = Mathf.Pow(Simulation.scale, -1f);
         scaleValue.text = "1/" + Convert.ToString(scale);
         scaleSlider.value = scale;
+    }
+
+    private void TriggerPressed(object sender, ControllerInteractionEventArgs e)
+    {
+        Show();
+    }
+
+    private void TriggerReleased(object sender, ControllerInteractionEventArgs e)
+    {
+        Hide();
     }
 
     public void Show()
