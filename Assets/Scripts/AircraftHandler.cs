@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class AircraftHandler : MonoBehaviour {
+    Simulation sim;
     protected Aircraft aircraft;
     protected List<Waypoint> waypoints;
     protected int time;
@@ -11,8 +12,11 @@ public class AircraftHandler : MonoBehaviour {
     protected GameObject smallAircraft;
 
     public void Start() {
-        smallAircraft = GameObject.Find("C");
-        aircraft = new Aircraft("A380", 0.492, 0.01523, 846, 492000, 311000, 4, smallAircraft);
+        sim = this.transform.parent.GetComponent<Simulation>();
+        smallAircraft = GameObject.Find("AircraftHandler/Cessna");
+        aircraft = new Aircraft("A380", 0.492, 0.01523, 846, 492000, 311000, 4);
+
+        ShowModel(smallAircraft);
     }
 
     // returns the active aircraft
@@ -27,7 +31,6 @@ public class AircraftHandler : MonoBehaviour {
     }
 
     protected void Reposition(Vector3 position, Vector3 rotation) {
-        position.z = position.z / 2f;
         transform.localPosition = position;
         transform.rotation = Quaternion.Euler(rotation);
     }
@@ -58,5 +61,47 @@ public class AircraftHandler : MonoBehaviour {
 
         Vector3 newRotation = prev.rotation;
         Reposition(newPosition, newRotation);
+    }
+
+    public void SetCW(double cW0)
+    {
+        this.aircraft.cW0 = cW0;
+        sim.AircraftChanged();
+    }
+
+    public void SetCA(double cA0)
+    {
+        this.aircraft.cA0 = cA0;
+        sim.AircraftChanged();
+    }
+
+    public void SetMass(double mass)
+    {
+        this.aircraft.mass = mass;
+        sim.AircraftChanged();
+    }
+
+    public void SetMaxThrust(double maxThrust)
+    {
+        this.aircraft.maxThrust = maxThrust;
+        sim.AircraftChanged();
+    }
+
+    public void SetEngines(int engines)
+    {
+        this.aircraft.engines = engines;
+        sim.AircraftChanged();
+    }
+
+    public void ShowModel(GameObject model)
+    {
+        MeshRenderer render = model.GetComponentInChildren<MeshRenderer>();
+        render.enabled = true;
+    }
+
+    public void HideModel(GameObject model)
+    {
+        MeshRenderer render = model.GetComponentInChildren<MeshRenderer>();
+        render.enabled = false;
     }
 }

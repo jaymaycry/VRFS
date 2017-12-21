@@ -2,18 +2,35 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EventManager : MonoBehaviour {
+public class EventManager : MonoBehaviour
+{
     public delegate void ChangeAction();
     public static event ChangeAction OnChange;
 
-    public static void AircraftChanged() {
-        Debug.Log("Aircraft changed!");
+    public static void Play()
+    {
+        Debug.Log("Play triggered!");
         if (OnChange != null)
             OnChange();
     }
 
-    public static void InteractionsChanged() {
-        Debug.Log("Interactions Changed");
+    public static void Pause()
+    {
+        Debug.Log("Pause triggered");
+        if (OnChange != null)
+            OnChange();
+    }
+
+    public static void Rewind()
+    {
+        Debug.Log("Rewind triggered");
+        if (OnChange != null)
+            OnChange();
+    }
+
+    public static void Forward()
+    {
+        Debug.Log("Forward triggered");
         if (OnChange != null)
             OnChange();
     }

@@ -140,7 +140,7 @@ public static class FlightEngine {
 
             velocity = velocity + (new Vector3(0f, resultingforce.y, resultingforce.x) * (float)(1 / aircraft.mass) * deltaTime);
 
-            position = position + velocity * deltaTime;
+            position = position + (velocity * deltaTime);
 
             rotation = new Vector3((float)-pitch, 0f, 0f);
 

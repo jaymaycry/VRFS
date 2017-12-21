@@ -8,24 +8,30 @@ public class Simulation : MonoBehaviour {
     public PathHandler pathHandler;
     // TODO: windhandler
     public Vector2 windVelocity;
-    public int time;
-    public int length;
-    public bool play;
+    public static int time = 0;
+    public static int length = 5000;
+    public static float deltaTime = 0.02f;
+    public static bool play = false;
+    public static float scale = 0.01f;
 
 
-	// Use this for initialization
-    public void Start () {
+    // Use this for initialization
+    public void Start() {
         aircraftHandler = GetComponentInChildren<AircraftHandler>();
         pathHandler = GetComponentInChildren<PathHandler>();
         waypoints = new List<Waypoint>();
         windVelocity = new Vector2(-0.5f, 0f);
-        length = 5000;
 
-        // register event listener
-        EventManager.OnChange += Recalculate;
-
+        SetScale(scale);
         Recalculate();
-	}
+    }
+
+    public void SetScale(float newScale)
+    {
+        scale = newScale;
+        this.transform.localScale = new Vector3(scale, scale, scale);
+        Debug.Log("Scale set");
+    }
 
     protected void Recalculate() {
         CalculateWaypoints();
@@ -42,7 +48,7 @@ public class Simulation : MonoBehaviour {
     }
 
     protected void CalculateWaypoints() {
-        waypoints = FlightEngine.CalculateWaypoints(aircraftHandler.GetAircraft(), pathHandler.GetInteractions(), windVelocity, 0.02f, this.length);
+        waypoints = FlightEngine.CalculateWaypoints(aircraftHandler.GetAircraft(), pathHandler.GetInteractions(), windVelocity, deltaTime, length);
     }
 
     protected void FixedUpdate() {
@@ -50,10 +56,12 @@ public class Simulation : MonoBehaviour {
             ResetSimulator();
         }
 
+        aircraftHandler.UpdatePosition(time);
+
         if (play) {
-            aircraftHandler.UpdatePosition(time);
             time++;
         }
+
     }
 
     protected void ResetSimulator() {
@@ -61,21 +69,28 @@ public class Simulation : MonoBehaviour {
         //play = false;
     }
 
-    public void Play() {
-        this.play = true;
+    public static void Play() {
+        Simulation.play = true;
     }
 
-    public void Pause() {
-        this.play = false;
+    public static void Pause() {
+        Simulation.play = false;
     }
 
-    public void SetTime(int time) {
-        this.time = time;
-        UpdateAircraftHandler();
+    public static void SetTime(int time) {
+        Simulation.time = time;
     }
 
-    public void SetLength(int length) {
-        this.length = length;
+    public static void SetLength(int length) {
+        Simulation.length = length;
+        // Recalculate(); 
+    }
+
+    public void AircraftChanged() {
+        Recalculate();
+    }
+
+    public void InteractionsChanged() {
         Recalculate();
     }
 }
