@@ -2,14 +2,14 @@
 using UnityEngine;
 using VRTK;
 
-public class AircraftMarker : VRTK_InteractableObject {
+public class AircraftSprite : VRTK_InteractableObject {
 	AircraftUI aircraftUI;
 	Aircraft aircraft;
 	Simulation simulation;
 
 	// Use this for initialization
 	protected void Awake () {
-		aircraftUI = GameObject.Find ("UI").GetComponent<UIHandler> ().aircraftUI;
+		aircraftUI = GameObject.Find ("UI").GetComponent<UIHandler>().aircraftUI;
 	}
 
 	// Update is called once per frame
@@ -18,10 +18,10 @@ public class AircraftMarker : VRTK_InteractableObject {
 		base.Update();
 	}
 
-	public void Init(Simulation simulation, Aircraft aircraft)
+	public void Init(Aircraft aircraft)
 	{
-		this.simulation = simulation;
-		this.aircraft = aircraft;
+		//this.simulation = simulation;
+		this.aircraft = aircraft; // TODO: noch kein aufruf
 	}
 
 	// Methods from InteractableObject for starting and stopping using objects.
@@ -29,7 +29,7 @@ public class AircraftMarker : VRTK_InteractableObject {
 	{
 		base.StartUsing(usingObject);
 		base.ToggleHighlight(true);
-		aircraftUI.Init(simulation, aircraft);
+		aircraftUI.Init(this.simulation, aircraft);
 		aircraftUI.Show();
 	}
 

@@ -36,7 +36,14 @@ public class AircraftHandler : MonoBehaviour {
         Waypoint prev = new Waypoint(new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), 0);
         Waypoint next = null;
 
-        waypoints.ForEach(delegate(Waypoint waypoint) {
+		// Neu 
+		aircraft = GameObject.Find ("AircraftHandler").GetComponent<AircraftHandler> ().GetAircraft ();
+		GameObject aircraftSprite = aircraft.sprite;
+		aircraftSprite = (GameObject)Instantiate(Resources.Load("AircraftSprite"));
+		aircraft.sprite = aircraftSprite;
+		aircraftSprite.GetComponent<AircraftSprite>().Init(aircraft);
+
+		waypoints.ForEach(delegate(Waypoint waypoint) {
             if (waypoint.time <= time) {
                 prev = waypoint;
             }

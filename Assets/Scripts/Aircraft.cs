@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Aircraft {
-
+	public GameObject sprite;
     public delegate void DelegateChange();
     public DelegateChange ChangeHandler; 
 
