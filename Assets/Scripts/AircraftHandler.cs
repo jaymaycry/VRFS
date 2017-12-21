@@ -11,17 +11,24 @@ public class AircraftHandler : MonoBehaviour {
     // aircraft models
     protected GameObject smallAircraft;
 
-    public void Start() {
+    public void Awake()
+    {
         sim = this.transform.parent.GetComponent<Simulation>();
         smallAircraft = GameObject.Find("AircraftHandler/Cessna");
-        aircraft = new Aircraft("A380", 0.492, 0.01523, 846, 492000, 311000, 4);
+    }
 
+    public void Start()
+    {
         ShowModel(smallAircraft);
     }
 
-    // returns the active aircraft
-    // TODO add other aircrafts as well
-    public Aircraft GetAircraft() {
+    public void SetAircraft(Aircraft aircraft)
+    {
+        this.aircraft = aircraft;
+    }
+
+    public Aircraft GetAircraft()
+    {
         return aircraft;
     }
 
@@ -61,36 +68,6 @@ public class AircraftHandler : MonoBehaviour {
 
         Vector3 newRotation = prev.rotation;
         Reposition(newPosition, newRotation);
-    }
-
-    public void SetCW(double cW0)
-    {
-        this.aircraft.cW0 = cW0;
-        sim.AircraftChanged();
-    }
-
-    public void SetCA(double cA0)
-    {
-        this.aircraft.cA0 = cA0;
-        sim.AircraftChanged();
-    }
-
-    public void SetMass(double mass)
-    {
-        this.aircraft.mass = mass;
-        sim.AircraftChanged();
-    }
-
-    public void SetMaxThrust(double maxThrust)
-    {
-        this.aircraft.maxThrust = maxThrust;
-        sim.AircraftChanged();
-    }
-
-    public void SetEngines(int engines)
-    {
-        this.aircraft.engines = engines;
-        sim.AircraftChanged();
     }
 
     public void ShowModel(GameObject model)

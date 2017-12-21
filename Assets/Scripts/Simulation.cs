@@ -3,30 +3,64 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Simulation : MonoBehaviour {
+    public static Simulation active;
+
     public List<Waypoint> waypoints;
     public AircraftHandler aircraftHandler;
     public PathHandler pathHandler;
     // TODO: windhandler
     public Vector2 windVelocity;
-    public static int time = 0;
-    public static int length = 5000;
-    public static float deltaTime = 0.02f;
-    public static bool play = false;
-    public static float scale = 0.01f;
+    public int time = 0;
+    public int length = 5000;
+    public float deltaTime = 0.02f;
+    public bool play = false;
+    public float scale = 0.01f;
 
 
     // Use this for initialization
-    public void Start() {
+    public void Awake() {
         aircraftHandler = GetComponentInChildren<AircraftHandler>();
         pathHandler = GetComponentInChildren<PathHandler>();
         waypoints = new List<Waypoint>();
-        windVelocity = new Vector2(-0.5f, 0f);
 
+        EventManager.OnChange += OnChange;
+        EventManager.OnPlay += Play;
+        EventManager.OnPause += Pause;
+        EventManager.OnSetTime += SetTime;
+        EventManager.OnSetScale += SetScale;
+        EventManager.OnCreateInteraction += CreateInteraction;
+    }
+
+    public void Init(Aircraft aircraft, List<Interaction> interactions, float scale, float deltaTime, int length, Vector2 windVelocity)
+    {
+        aircraftHandler.SetAircraft(aircraft);
+        pathHandler.SetInteractions(interactions);
         SetScale(scale);
+        SetDeltaTime(deltaTime);
+        SetLength(length);
+        this.windVelocity = windVelocity;
+
         Recalculate();
     }
 
-    public void SetScale(float newScale)
+    protected void CreateInteraction(Simulation sim)
+    {
+        if (sim && sim == this)
+        {
+            Interaction interaction = new Interaction(0d, 0d, 0, true);
+            pathHandler.AddInteraction(interaction);
+            EventManager.OpenInteractionUI(this, interaction);
+        }
+    }
+
+    protected void OnChange(Simulation sim)
+    {
+        if (sim == null || sim == this)
+            Recalculate();
+    }
+
+
+    protected void SetScale(float newScale)
     {
         scale = newScale;
         this.transform.localScale = new Vector3(scale, scale, scale);
@@ -69,28 +103,30 @@ public class Simulation : MonoBehaviour {
         //play = false;
     }
 
-    public static void Play() {
-        Simulation.play = true;
+    protected void Play() {
+        this.play = true;
     }
 
-    public static void Pause() {
-        Simulation.play = false;
+    protected void Pause() {
+        this.play = false;
     }
 
-    public static void SetTime(int time) {
-        Simulation.time = time;
+    protected void SetTime(int time) {
+        this.time = time;
     }
 
-    public static void SetLength(int length) {
-        Simulation.length = length;
+    protected void SetLength(int length) {
+        this.length = length;
         // Recalculate(); 
     }
 
-    public void AircraftChanged() {
-        Recalculate();
+    protected void SetDeltaTime(float deltaTime)
+    {
+        this.deltaTime = deltaTime;
     }
 
-    public void InteractionsChanged() {
-        Recalculate();
+    public void SetActive()
+    {
+        Simulation.active = this;
     }
 }

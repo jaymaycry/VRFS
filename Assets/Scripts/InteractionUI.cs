@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class InteractionUI : MonoBehaviour
 {
     Simulation sim;
-    InteractionMarker interaction;
+    Interaction interaction;
 
     Slider pitchSlider;
     Text pitchValue;
@@ -33,23 +33,38 @@ public class InteractionUI : MonoBehaviour
         timeSlider = GameObject.Find("UI/Interaction/Panel/Time/Slider").GetComponent<Slider>();
         timeValue = GameObject.Find("UI/Interaction/Panel/Time/Value").GetComponent<Text>();
         timeHigher = GameObject.Find("UI/Interaction/Panel/Time/HigherBound").GetComponent<Text>();
+
+        EventManager.OnOpenInteractionUI += Open;
+        EventManager.OnCloseInteractionUI += Close;
     }
 
-    public void Init(InteractionMarker interaction, Simulation sim)
+    public void Open(Simulation sim, Interaction interaction)
     {
         this.interaction = interaction;
+        Debug.Log("interaction edit bool:");
+        Debug.Log(interaction.edit);
         this.sim = sim;
+        Show();
+    }
+
+    public void TriggerClose()
+    {
+        EventManager.CloseInteractionUI();
+    }
+
+    public void Close()
+    {
+        Hide();
     }
 
     public void Show()
     {
-        Debug.Log("show interaction ui");
-        pitchSlider.value = (float)interaction.GetPitch();
-        thrustSlider.value = (float)interaction.GetThrust() * 100f;
+        pitchSlider.value = (float)interaction.pitch;
+        thrustSlider.value = (float)interaction.thrust * 100f;
 
-        timeHigher.text = Convert.ToString(Simulation.length * Simulation.deltaTime) + "s";
-        timeSlider.value = (float)interaction.GetTime() * Simulation.deltaTime;
-        timeSlider.maxValue = Simulation.length * Simulation.deltaTime;
+        timeHigher.text = Convert.ToString(sim.length * sim.deltaTime) + "s";
+        timeSlider.value = (float)interaction.time * sim.deltaTime;
+        timeSlider.maxValue = sim.length * sim.deltaTime;
 
         this.gameObject.SetActive(true);
     }
@@ -64,20 +79,23 @@ public class InteractionUI : MonoBehaviour
     {
         Debug.Log("pitch changed");
         pitchValue.text = Convert.ToString(newPitch) + "°";
-        interaction.SetPitch(newPitch);
+        interaction.pitch = newPitch;
+        EventManager.InteractionChanged(sim);
     }
 
     public void ThrustChanged(float newThrust)
     {
         Debug.Log("thrust changed");
         thrustValue.text = Convert.ToString(newThrust) + "%";
-        interaction.SetThrust(newThrust / 100f);
+        interaction.thrust = newThrust / 100f;
+        EventManager.InteractionChanged(sim);
     }
 
     public void TimeChanged(float newTime)
     {
         Debug.Log("time changed");
         timeValue.text = Convert.ToString(newTime) + "s";
-        interaction.SetTime((int)(newTime / Simulation.deltaTime));
+        interaction.time = (int)(newTime / sim.deltaTime);
+        EventManager.InteractionChanged(sim);
     }
 }

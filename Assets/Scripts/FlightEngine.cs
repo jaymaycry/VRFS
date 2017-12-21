@@ -67,7 +67,7 @@ public static class FlightEngine {
 
         // set first interaction as next
         if (interactions.Count > 0) {
-            next = interactions[0];
+            next = interactions[j];
             j++;
         }
 
@@ -75,11 +75,10 @@ public static class FlightEngine {
             // update current
             if (i >= next.time) {
                 current = next;
-                j++;
-            }
 
-            if (j < interactions.Count && i < interactions[j].time) {
-                next = interactions[j];
+                if (j < interactions.Count)
+                    next = interactions[j];
+                    j++;
             }
 
             interpolated.Add(current);

@@ -17,7 +17,6 @@ public class PlayerUI : MonoBehaviour {
     Text timeValue;
     Text timeHigher;
 
-
     // Use this for initialization
     protected void Awake()
     {
@@ -29,35 +28,23 @@ public class PlayerUI : MonoBehaviour {
         timeHigher = GameObject.Find("UI/Player/Panel/Time/HigherBound").GetComponent<Text>();
 
         simParent = GameObject.Find("Simulations");
-        controllerEvents = GameObject.Find("RightController").GetComponent<VRTK_ControllerEvents>();
 
-        controllerEvents.TriggerPressed += new ControllerInteractionEventHandler(TriggerPressed);
-        controllerEvents.TriggerReleased += new ControllerInteractionEventHandler(TriggerReleased);
-
-        Hide();
+        EventManager.OnOpenPlayerUI += Show;
+        EventManager.OnClosePlayerUI += Hide;
     }
 
     public void Update()
     {
-        timeHigher.text = Convert.ToString(Simulation.length * Simulation.deltaTime) + "s";
-        timeSlider.value = (float)Simulation.time * Simulation.deltaTime;
-        timeSlider.maxValue = (float)Simulation.length * Simulation.deltaTime;
+        timeHigher.text = Convert.ToString((float)Simulation.active.length * Simulation.active.deltaTime) + "s";
+        timeSlider.value = (float)Simulation.active.time * Simulation.active.deltaTime;
+        timeSlider.maxValue = (float)Simulation.active.length * Simulation.active.deltaTime;
 
 
-        float scale = Mathf.Pow(Simulation.scale, -1f);
+        float scale = Mathf.Pow(Simulation.active.scale, -1f);
         scaleValue.text = "1/" + Convert.ToString(scale);
         scaleSlider.value = scale;
     }
 
-    private void TriggerPressed(object sender, ControllerInteractionEventArgs e)
-    {
-        Show();
-    }
-
-    private void TriggerReleased(object sender, ControllerInteractionEventArgs e)
-    {
-        Hide();
-    }
 
     public void Show()
     {
@@ -73,57 +60,63 @@ public class PlayerUI : MonoBehaviour {
 
     public void Play()
     {
-        Simulation.Play();
-        Debug.Log("Play pressed.");
+        EventManager.Play();
+        Debug.Log("play button pressed.");
     }
 
     public void Pause()
     {
-        Simulation.Pause();
-        Debug.Log("Pause pressed.");
+        EventManager.Pause();
+        Debug.Log("pause button pressed.");
     }
 
     public void Rewind()
     {
-        int currentTime = (int) ((float)Simulation.time * Simulation.deltaTime);
+        int currentTime = (int) ((float)Simulation.active.time * Simulation.active.deltaTime);
         if (currentTime < 16) {
-            Simulation.SetTime(0);
+            EventManager.SetTime(0);
         } else {
-            Simulation.SetTime(currentTime - 15);
+            EventManager.SetTime(currentTime - 15);
         }
-        Debug.Log("Rewind pressed.");
+        Debug.Log("rewind button pressed.");
     }
 
     public void Forward()
     {
-        int currentTime = (int)((float)Simulation.time * Simulation.deltaTime);
-        int length = (int)((float)Simulation.length / Simulation.deltaTime);
+        int currentTime = (int)((float)Simulation.active.time * Simulation.active.deltaTime);
+        int length = (int)((float)Simulation.active.length / Simulation.active.deltaTime);
         if (currentTime < length - 15)
         {
-            Simulation.SetTime(currentTime + 15);
+            EventManager.SetTime(currentTime + 15);
         }
         else
         {
-            Simulation.SetTime(length);
+            EventManager.SetTime(length);
         }
-        Debug.Log("Forward pressed.");
+        Debug.Log("forward button pressed.");
     }
 
     public void ScaleChanged(float newScale)
     {
-        Debug.Log("scale changed");
+        Debug.Log("scale slider changed");
         Debug.Log(newScale);
         scaleValue.text = "1/" + Convert.ToString(newScale);
 
         foreach (Simulation sim in simParent.GetComponentsInChildren<Simulation>()) {
-            sim.SetScale(1f / newScale);
+            EventManager.SetScale(1f / newScale);
         }
     }
 
     public void TimeChanged(float newTime)
     {
-        Debug.Log("time changed");
+        Debug.Log("time slider changed");
         timeValue.text = Convert.ToString(newTime) + "s";
-        Simulation.SetTime((int) (newTime / Simulation.deltaTime));
+        EventManager.SetTime((int) (newTime / Simulation.active.deltaTime));
+    }
+
+    public void CreateInteraction()
+    {
+        Debug.Log("create interaction button pressed");
+        EventManager.CreateInteraction(Simulation.active);
     }
 }

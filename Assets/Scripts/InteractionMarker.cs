@@ -4,59 +4,56 @@ using System.Collections.Generic;
 using UnityEngine;
 using VRTK;
 
-public class InteractionMarker : VRTK_InteractableObject {
-    InteractionUI ui;
-    Interaction interaction;
-    Simulation sim;
+public class InteractionMarker : VRTK_InteractableObject
+{
+    public Interaction interaction;
+    public Simulation sim;
+    public static InteractionMarker active;
+    public bool highlight;
 
-	// Use this for initialization
-	protected override void Awake () {
+    // Use this for initialization
+    protected override void Awake()
+    {
         base.Awake();
-        ui = GameObject.Find("UI").GetComponent<UIHandler>().interactionUI;
+        this.highlight = false;
+        EventManager.OnCloseInteractionUI += Close;
     }
 
-    // Update is called once per frame
     protected override void Update()
-    {        base.Update();    }
+    {
+        base.Update();
+        base.ToggleHighlight(interaction.edit);
 
-    public void Init(Interaction interaction, Simulation sim)
+    }
+
+    public void Init(Simulation sim, Interaction interaction)
     {
         this.interaction = interaction;
+        Debug.Log("interaction edit bool:");
+        Debug.Log(interaction.edit);
         this.sim = sim;
     }
 
-    public override void StartUsing(VRTK_InteractUse usingObject)    {        base.StartUsing(usingObject);        base.ToggleHighlight(true);        ui.Init(this, sim);        ui.Show();    }    public override void StopUsing(VRTK_InteractUse usingObject)    {        base.StopUsing(usingObject);        base.ToggleHighlight(false);        ui.Hide();    }
+    public override void StartUsing(VRTK_InteractUse usingObject)    {
+        Debug.Log("start using interaction marker");
+        if (active && active != this)
+            active.Close();
+                base.StartUsing(usingObject);
+        this.usingObject = usingObject;
+        this.interaction.edit = true;
+        active = this;        EventManager.OpenInteractionUI(sim, interaction);    }    public override void StopUsing(VRTK_InteractUse usingObject)    {
+        Debug.Log("stop using interaction marker");        base.StopUsing(usingObject);
+        this.usingObject = null;
+        this.interaction.edit = false;
+        active = null;        EventManager.CloseInteractionUI();    }
 
-    public double GetPitch()
+    public void Close()
     {
-        return this.interaction.pitch;
-    }
-
-    public double GetThrust()
-    {
-        return this.interaction.thrust;
-    }
-
-    public int GetTime()
-    {
-        return this.interaction.time;
-    }
-
-    public void SetPitch(double pitch)
-    {
-        this.interaction.pitch = pitch;
-        sim.InteractionsChanged();
-    }
-
-    public void SetThrust(double thrust)
-    {
-        this.interaction.thrust = thrust;
-        sim.InteractionsChanged();
-    }
-
-    public void SetTime(int time)
-    {
-        this.interaction.time = time;
-        sim.InteractionsChanged();
+        Debug.Log("close");
+        this.interaction.edit = false;
+        if (usingObject)
+        {
+            StopUsing(usingObject);
+        }
     }
 }
