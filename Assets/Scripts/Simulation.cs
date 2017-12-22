@@ -3,85 +3,131 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Simulation : MonoBehaviour {
-    public Vector2 windVelocity;
+    public static Simulation active;
+
     public List<Waypoint> waypoints;
-    public List<Interaction> interactions;
     public AircraftHandler aircraftHandler;
     public PathHandler pathHandler;
-    public Waypoint current;
-    public Waypoint next;
-    public float time;
-    public int item;
+    // TODO: windhandler
+    public Vector2 windVelocity;
+    public int time = 0;
+    public int length = 5000;
+    public float deltaTime = 0.02f;
+    public bool play = false;
+    public float scale = 0.01f;
 
 
-	// Use this for initialization
-    protected void Start () {
-        windVelocity = new Vector2(-0.5f, 0f);
+    // Use this for initialization
+    public void Awake() {
         aircraftHandler = GetComponentInChildren<AircraftHandler>();
         pathHandler = GetComponentInChildren<PathHandler>();
-        interactions = new List<Interaction>();
+        waypoints = new List<Waypoint>();
 
-        // fake interactions
-        AddInteraction(new Interaction(0, 1, 0));
-        AddInteraction(new Interaction(20, 1, 1000));
-	}
-	
-    protected void UpdatePath() {
-        pathHandler.updateWaypoints(waypoints);
+        EventManager.OnChange += OnChange;
+        EventManager.OnPlay += Play;
+        EventManager.OnPause += Pause;
+        EventManager.OnSetTime += SetTime;
+        EventManager.OnSetScale += SetScale;
+        EventManager.OnCreateInteraction += CreateInteraction;
     }
 
-    //void Update() {
-    //    if (time > 400) {
-            RemoveInteraction(interactions[1]);
-    //    }
-    //}
+    public void Init(Aircraft aircraft, List<Interaction> interactions, float scale, float deltaTime, int length, Vector2 windVelocity)
+    {
+        aircraftHandler.SetAircraft(aircraft);
+        pathHandler.SetInteractions(interactions);
+        SetScale(scale);
+        SetDeltaTime(deltaTime);
+        SetLength(length);
+        this.windVelocity = windVelocity;
+
+        Recalculate();
+    }
+
+    protected void CreateInteraction(Simulation sim)
+    {
+        if (sim && sim == this)
+        {
+            Interaction interaction = new Interaction(0d, 0d, 0, true);
+            pathHandler.AddInteraction(interaction);
+            EventManager.OpenInteractionUI(this, interaction);
+        }
+    }
+
+    protected void OnChange(Simulation sim)
+    {
+        if (sim == null || sim == this)
+            Recalculate();
+    }
+
+
+    protected void SetScale(float newScale)
+    {
+        scale = newScale;
+        this.transform.localScale = new Vector3(scale, scale, scale);
+        Debug.Log("Scale set");
+    }
+
+    protected void Recalculate() {
+        CalculateWaypoints();
+        UpdatePathHandler();
+        UpdateAircraftHandler();
+    }
+
+    protected void UpdatePathHandler() {
+        pathHandler.SetWaypoints(waypoints);
+    }
+
+    protected void UpdateAircraftHandler() {
+        aircraftHandler.SetWaypoints(waypoints);
+    }
 
     protected void CalculateWaypoints() {
-        waypoints = FlightEngine.CalculateWaypoints(aircraftHandler.GetAircraft(), interactions, windVelocity, 0.02f, 5000);
+        // waypoints = FlightEngine.CalculateWaypoints(aircraftHandler.GetAircraft(), pathHandler.GetInteractions(), windVelocity, deltaTime, length);
+        waypoints = FlightEngine.CalculateWaypoints(aircraftHandler.GetAircraft(), pathHandler.GetInteractions(), windVelocity, deltaTime, length);
     }
 
     protected void FixedUpdate() {
-        if (time >= next.time) {
-            item++;
-            if (item >= waypoints.Count) {
-                ResetSimulator();
-            } else {
-				current = next;
-				next = waypoints[item];
-            }
+        if (time > waypoints.Count) {
+            ResetSimulator();
         }
 
-        float deltaTime = next.time - current.time;
-        Vector3 deltaPosition = next.position - current.position;
-        Vector3 segment = deltaPosition / deltaTime;
+        aircraftHandler.UpdatePosition(time);
 
-        Vector3 newPosition = current.position + ((time - current.time) * segment);
-        Vector3 newRotation = current.rotation;
-        aircraftHandler.Reposition(newPosition, newRotation);
+        if (play) {
+            time++;
+        }
 
-        time++;
     }
 
-    public void ResetSimulator() {
-        current = waypoints[0];
-        next = waypoints[1];
+    protected void ResetSimulator() {
         time = 0;
-        item = 1;
+        //play = false;
     }
 
-    public void AddInteraction(Interaction interaction) {
-        interactions.Add(interaction);
-        Recalculate();
+    protected void Play() {
+        this.play = true;
     }
 
-    public void RemoveInteraction(Interaction interaction) {
-        interactions.Remove(interaction);
-        Recalculate();
+    protected void Pause() {
+        this.play = false;
     }
 
-    public void Recalculate() {
-        CalculateWaypoints();
-        UpdatePath();
-        ResetSimulator();
+    protected void SetTime(int time) {
+        this.time = time;
+    }
+
+    protected void SetLength(int length) {
+        this.length = length;
+        // Recalculate(); 
+    }
+
+    protected void SetDeltaTime(float deltaTime)
+    {
+        this.deltaTime = deltaTime;
+    }
+
+    public void SetActive()
+    {
+        Simulation.active = this;
     }
 }
