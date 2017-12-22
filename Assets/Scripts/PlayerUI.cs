@@ -8,7 +8,6 @@ using VRTK;
 
 public class PlayerUI : MonoBehaviour {
     GameObject simParent;
-    VRTK_ControllerEvents controllerEvents;
 
     Slider scaleSlider;
     Text scaleValue;

@@ -9,13 +9,11 @@ public class InteractionMarker : VRTK_InteractableObject
     public Interaction interaction;
     public Simulation sim;
     public static InteractionMarker active;
-    public bool highlight;
 
     // Use this for initialization
     protected override void Awake()
     {
         base.Awake();
-        this.highlight = false;
         EventManager.OnCloseInteractionUI += Close;
     }
 

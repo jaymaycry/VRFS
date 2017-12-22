@@ -7,11 +7,11 @@ public class SimulationHandler : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
-        Aircraft aircraft = new Aircraft("A380", 0.492, 0.01523, 846, 492000, 311000, 4);
+        Aircraft aircraft = new Aircraft("A380", 0.11, 0.05, 0.45, 0.6, 3, 846, 492000, 311000, 4);
 
         List<Interaction> interactions = new List<Interaction>();
         interactions.Add(new Interaction(0, 1, 1));
-        interactions.Add(new Interaction(20, 1, 1000));
+        interactions.Add(new Interaction(15, 1, 2000));
 
         float scale = 0.01f;
         float deltaTime = 0.02f;

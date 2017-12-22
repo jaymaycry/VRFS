@@ -82,6 +82,7 @@ public class Simulation : MonoBehaviour {
     }
 
     protected void CalculateWaypoints() {
+        // waypoints = FlightEngine.CalculateWaypoints(aircraftHandler.GetAircraft(), pathHandler.GetInteractions(), windVelocity, deltaTime, length);
         waypoints = FlightEngine.CalculateWaypoints(aircraftHandler.GetAircraft(), pathHandler.GetInteractions(), windVelocity, deltaTime, length);
     }
 
