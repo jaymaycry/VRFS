@@ -99,6 +99,7 @@ public static class FlightEngine
     {
         return 1.2;
     }
+
     public static double Roh(double h, double t)
     {
         h = h + 153.85 * (t - 20); //t = 20°C ist der normalfall, bei abweichung berechnen wir die höhe relativ zur gegebenen Temperatur
