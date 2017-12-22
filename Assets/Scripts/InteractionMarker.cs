@@ -36,24 +36,27 @@ public class InteractionMarker : VRTK_InteractableObject
 
     public override void StartUsing(VRTK_InteractUse usingObject)    {
         Debug.Log("start using interaction marker");
-        if (active && active != this)
-            active.Close();
-                base.StartUsing(usingObject);
-        this.usingObject = usingObject;
+        base.StartUsing(usingObject);
+
+        if (InteractionMarker.active && InteractionMarker.active != this)
+            InteractionMarker.active.Close();
+
+
         this.interaction.edit = true;
-        active = this;        EventManager.OpenInteractionUI(sim, interaction);    }    public override void StopUsing(VRTK_InteractUse usingObject)    {
+        InteractionMarker.active = this;
+        EventManager.OpenInteractionUI(sim, interaction);    }    public override void StopUsing(VRTK_InteractUse usingObject)    {
         Debug.Log("stop using interaction marker");        base.StopUsing(usingObject);
-        this.usingObject = null;
         this.interaction.edit = false;
-        active = null;        EventManager.CloseInteractionUI();    }
+        InteractionMarker.active = null;        EventManager.CloseInteractionUI();    }
 
     public void Close()
     {
         Debug.Log("close");
         this.interaction.edit = false;
-        if (usingObject)
+        if (base.usingObject != null)
         {
-            StopUsing(usingObject);
+            this.StopUsing(base.usingObject);
+            Debug.Log("stop using");
         }
     }
 }

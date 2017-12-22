@@ -22,7 +22,7 @@ public class UIHandler : MonoBehaviour {
     {
         // hide uis
         interactionUI.Hide();
-        //playerUI.Hide();
+        playerUI.Hide();
 
         // set rotation of uis to 45 degree in X axis to make it better usable
         transform.rotation = Quaternion.Euler(new Vector3(45f, 0f, 0f));

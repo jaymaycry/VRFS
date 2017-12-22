@@ -42,12 +42,13 @@ public class PathHandler : MonoBehaviour {
         marker.transform.parent = this.transform;
         marker.GetComponent<InteractionMarker>().Init(sim, interaction);
         marker.transform.localPosition = new Vector3(0f, 0f, 0f);
-        marker.transform.localScale = new Vector3(3f, 3f, 3f);
+        marker.transform.localScale = new Vector3(6f, 6f, 6f);
         this.interactionMarkers.Add(marker);
     }
 
     public List<Interaction> GetInteractions()
     {
+        SortInteractions();
         return this.interactions;
     }
 
