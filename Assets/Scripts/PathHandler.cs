@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -82,6 +83,7 @@ public class PathHandler : MonoBehaviour {
         lineRenderer.startWidth = sim.scale;
         lineRenderer.endWidth = sim.scale;
         lineRenderer.positionCount = waypointsArray.Length;
+
         for (int i = 0; i < waypointsArray.Length; i++)
         {
             Vector3 position = waypointsArray[i].position;
