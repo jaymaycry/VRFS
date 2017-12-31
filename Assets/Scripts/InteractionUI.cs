@@ -38,6 +38,25 @@ public class InteractionUI : MonoBehaviour
         EventManager.OnCloseInteractionUI += Close;
     }
 
+    protected void Init()
+    {
+        pitchSlider.value = (float)interaction.pitch;
+        thrustSlider.value = (float)interaction.thrust * 100f;
+
+        timeSlider.value = (float)interaction.time * sim.deltaTime;
+        timeSlider.maxValue = sim.length * sim.deltaTime;
+
+        UpdateValue();
+    }
+
+    protected void UpdateValue()
+    {
+        timeHigher.text = Convert.ToString(sim.length * sim.deltaTime) + "s";
+        pitchValue.text = Convert.ToString(interaction.pitch) + "°";
+        thrustValue.text = Convert.ToString(interaction.thrust * 100) + "%";
+        timeValue.text = Convert.ToString((int)interaction.time * sim.deltaTime) + "s";
+    }
+
     public void Open(Simulation sim, Interaction interaction)
     {
         this.interaction = interaction;
@@ -59,13 +78,8 @@ public class InteractionUI : MonoBehaviour
 
     public void Show()
     {
-        pitchSlider.value = (float)interaction.pitch;
-        thrustSlider.value = (float)interaction.thrust * 100f;
-
-        timeHigher.text = Convert.ToString(sim.length * sim.deltaTime) + "s";
-        timeSlider.value = (float)interaction.time * sim.deltaTime;
-        timeSlider.maxValue = sim.length * sim.deltaTime;
-
+        Debug.Log("show interaction ui");
+        Init();
         this.gameObject.SetActive(true);
     }
 
@@ -78,16 +92,16 @@ public class InteractionUI : MonoBehaviour
     public void PitchChanged(float newPitch)
     {
         Debug.Log("pitch changed");
-        pitchValue.text = Convert.ToString(newPitch) + "°";
         interaction.pitch = newPitch;
+        UpdateValue();
         EventManager.InteractionChanged(sim);
     }
 
     public void ThrustChanged(float newThrust)
     {
         Debug.Log("thrust changed");
-        thrustValue.text = Convert.ToString(newThrust) + "%";
         interaction.thrust = newThrust / 100f;
+        UpdateValue();
         EventManager.InteractionChanged(sim);
     }
 
@@ -96,6 +110,7 @@ public class InteractionUI : MonoBehaviour
         Debug.Log("time changed");
         timeValue.text = Convert.ToString(newTime) + "s";
         interaction.time = (int)(newTime / sim.deltaTime);
+        UpdateValue();
         EventManager.InteractionChanged(sim);
     }
 }

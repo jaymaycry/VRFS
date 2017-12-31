@@ -36,6 +36,12 @@ public class EventManager : MonoBehaviour
     public static event OpenPlayerUIAction OnOpenPlayerUI;
     public static event ClosePlayerUIAction OnClosePlayerUI;
 
+    public delegate void OpenAircraftUIAction(Simulation sim, Aircraft aircraft);
+    public delegate void CloseAircraftUIAction();
+
+    public static event OpenAircraftUIAction OnOpenAircraftUI;
+    public static event CloseAircraftUIAction OnCloseAircraftUI;
+
     public static void AircraftChanged(Simulation sim)
     {
         Debug.Log("aircraft changed");
@@ -88,8 +94,8 @@ public class EventManager : MonoBehaviour
     public static void OpenInteractionUI(Simulation sim, Interaction interaction)
     {
         Debug.Log("open interaction ui");
-        Debug.Log(sim);
-        Debug.Log(interaction);
+
+        CloseAircraftUI();
 
         if (OnOpenInteractionUI != null)
             OnOpenInteractionUI(sim, interaction);
@@ -117,5 +123,23 @@ public class EventManager : MonoBehaviour
 
         if (OnClosePlayerUI != null)
             OnClosePlayerUI();
+    }
+
+    public static void OpenAircraftUI(Simulation sim, Aircraft aircraft)
+    {
+        Debug.Log("open aircraft ui");
+
+        CloseInteractionUI();
+
+        if (OnOpenAircraftUI != null)
+            OnOpenAircraftUI(sim, aircraft);
+    }
+
+    public static void CloseAircraftUI()
+    {
+        Debug.Log("close aircraft ui");
+
+        if (OnCloseAircraftUI != null)
+            OnCloseAircraftUI();
     }
 }

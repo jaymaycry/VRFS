@@ -7,8 +7,6 @@ using VRTK;
 
 
 public class PlayerUI : MonoBehaviour {
-    GameObject simParent;
-
     Slider scaleSlider;
     Text scaleValue;
 
@@ -26,7 +24,6 @@ public class PlayerUI : MonoBehaviour {
         timeValue = GameObject.Find("UI/Player/Panel/Time/Value").GetComponent<Text>();
         timeHigher = GameObject.Find("UI/Player/Panel/Time/HigherBound").GetComponent<Text>();
 
-        simParent = GameObject.Find("Simulations");
 
         EventManager.OnOpenPlayerUI += Show;
         EventManager.OnClosePlayerUI += Hide;
@@ -100,10 +97,7 @@ public class PlayerUI : MonoBehaviour {
         Debug.Log("scale slider changed");
         Debug.Log(newScale);
         scaleValue.text = "1/" + Convert.ToString(newScale);
-
-        foreach (Simulation sim in simParent.GetComponentsInChildren<Simulation>()) {
-            EventManager.SetScale(1f / newScale);
-        }
+        EventManager.SetScale(1f / newScale);
     }
 
     public void TimeChanged(float newTime)
@@ -117,5 +111,13 @@ public class PlayerUI : MonoBehaviour {
     {
         Debug.Log("create interaction button pressed");
         EventManager.CreateInteraction(Simulation.active);
+    }
+
+    public void EditAircraft()
+    {
+        Debug.Log("edit aircraft button pressed");
+        Simulation sim = Simulation.active;
+        Aircraft aircraft = sim.aircraftHandler.GetAircraft();
+        EventManager.OpenAircraftUI(sim, aircraft);
     }
 }
