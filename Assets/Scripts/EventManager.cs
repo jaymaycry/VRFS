@@ -102,6 +102,7 @@ public class EventManager : MonoBehaviour
         Debug.Log("open interaction ui");
 
         CloseAircraftUI();
+        ClosePolarCurveUI();
 
         if (OnOpenInteractionUI != null)
             OnOpenInteractionUI(sim, interaction);
@@ -136,6 +137,7 @@ public class EventManager : MonoBehaviour
         Debug.Log("open aircraft ui");
 
         CloseInteractionUI();
+        ClosePolarCurveUI();
 
         if (OnOpenAircraftUI != null)
             OnOpenAircraftUI(sim, aircraft);
@@ -152,6 +154,9 @@ public class EventManager : MonoBehaviour
     public static void OpenPolarCurveUI(Simulation sim, Aircraft aircraft)
     {
         Debug.Log("open polar curve ui");
+
+        CloseInteractionUI();
+        CloseAircraftUI();
 
         if (OnOpenPolarCurveUI != null)
             OnOpenPolarCurveUI(sim, aircraft);

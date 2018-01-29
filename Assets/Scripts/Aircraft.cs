@@ -31,7 +31,10 @@ public class Aircraft {
     {
         this.name = name;
         this.cW0 = cW0;
+        this.cW1 = cW1;
+        this.cW2 = cW2;
         this.cA0 = cA0;
+        this.cA1 = cA1;
         this.wingArea = wingArea;
         this.mass = mass;
         this.maxThrust = maxThrust;
