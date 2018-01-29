@@ -119,6 +119,6 @@ public class AircraftUI : MonoBehaviour {
     public void EditPolarCurve()
     {
         Debug.Log("edit polar curve button pressed");
-        // todo Edit Polar Curve UI
+        EventManager.OpenPolarCurveUI(sim, aircraft);
     }
 }
