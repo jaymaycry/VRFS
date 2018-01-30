@@ -7,7 +7,7 @@ public class SimulationHandler : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
-        Aircraft aircraft = new Aircraft("b747", 0.11, 0.05, 0.45, 0.6, 3, 541, 250000, 282000, 4);
+        Aircraft aircraft = new Aircraft("b787", 0.11, 0.03, 0.2, 0.6, 2, 325, 200000, 324000, 2);
 
         List<Interaction> interactions = new List<Interaction>();
         interactions.Add(new Interaction(0, 1, 1));

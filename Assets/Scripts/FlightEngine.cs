@@ -117,8 +117,8 @@ public static class FlightEngine
         bool grounded = true;
         double thrustFactor = 0;
         double angleOfAttack = 0;
-        double cw = aircraft.cW0;
-        double ca = aircraft.cA0;
+        double cw = 0;//aircraft.cW0;
+        double ca = 0;//aircraft.cA0;
         //TODO Luftdichte berechnen abhängig Temperatur und Höhe und Luftfeuchtigkeit
 
 
@@ -161,6 +161,7 @@ public static class FlightEngine
             angleOfAttack = CalcAngleOfAttack(pitch, resultingforce);
             cw = aircraft.CalcCW(angleOfAttack);
             ca = aircraft.CalcCA(angleOfAttack);
+            Debug.Log("i:" + i + " ca:" + ca + " cw:" + cw + " angle of attack:" + angleOfAttack + " force y:" + resultingforce.y + " force x: " + resultingforce.x);
 
             velocity = velocity + (new Vector3(0f, resultingforce.y, resultingforce.x) * (float)(1 / aircraft.mass) * deltaTime);
 
