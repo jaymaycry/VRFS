@@ -46,13 +46,13 @@ public static class FlightEngine
     // gamma
     private static double CalcSlope(Vector2 trajectory)
     {
-        return Vector2.Angle(new Vector2(0, 0), trajectory);
+        return Vector2.Angle(new Vector2(1, 0), trajectory);
     }
 
     // alpha
     private static double CalcAngleOfAttack(double pitch, Vector2 trajectory)
     {
-        return CalcSlope(trajectory) - pitch;
+        return pitch - CalcSlope(trajectory);
     }
 
     /**

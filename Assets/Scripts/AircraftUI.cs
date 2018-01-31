@@ -41,7 +41,7 @@ public class AircraftUI : MonoBehaviour {
 
     protected  void Init()
     {
-        // enginesSlider.value = (float)aircraft.engines;
+        enginesSlider.value = (float)aircraft.engines;
         thrustSlider.value = (float)(aircraft.maxThrust/1000);
         wingAreaSlider.value = (float)aircraft.wingArea;
         massSlider.value = (float)aircraft.mass;
