@@ -6,7 +6,7 @@ public class SimulationHandler : MonoBehaviour {
     Simulation sim;
 
 	// Use this for initialization
-	void Awake () {
+	void Start () {
         Aircraft aircraft = new Aircraft("b787", 0.11, 0.03, 0.2, 0.6, 2, 325, 200000, 324000, 2);
 
         List<Interaction> interactions = new List<Interaction>();
