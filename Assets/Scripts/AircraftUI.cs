@@ -41,7 +41,7 @@ public class AircraftUI : MonoBehaviour {
 
     protected  void Init()
     {
-        enginesSlider.value = (float)aircraft.engines;
+        //enginesSlider.value = (float)aircraft.engines;
         thrustSlider.value = (float)(aircraft.maxThrust/1000);
         wingAreaSlider.value = (float)aircraft.wingArea;
         massSlider.value = (float)aircraft.mass;
@@ -51,7 +51,7 @@ public class AircraftUI : MonoBehaviour {
 
     protected void UpdateValues()
     {
-        enginesValue.text = Convert.ToString(aircraft.engines);
+        //enginesValue.text = Convert.ToString(aircraft.engines);
         thrustValue.text = Convert.ToString((int)(aircraft.maxThrust / 1000d)) + "kN";
         wingAreaValue.text = Convert.ToString((int)aircraft.wingArea) + "m2";
         massValue.text = Convert.ToString((int)(aircraft.mass / 1000d)) + "t";

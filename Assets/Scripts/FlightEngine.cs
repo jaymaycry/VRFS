@@ -159,9 +159,10 @@ public static class FlightEngine
             }
 
             angleOfAttack = CalcAngleOfAttack(pitch, resultingforce);
-            cw = aircraft.CalcCW(angleOfAttack);
-            ca = aircraft.CalcCA(angleOfAttack);
-            Debug.Log("i:" + i + " ca:" + ca + " cw:" + cw + " angle of attack:" + angleOfAttack + " force y:" + resultingforce.y + " force x: " + resultingforce.x);
+            // todo fix this....
+            cw = aircraft.MockCW(angleOfAttack);
+            ca = aircraft.MockCA(angleOfAttack);
+            //Debug.Log("i:" + i + " ca:" + ca + " cw:" + cw + " angle of attack:" + angleOfAttack + " force y:" + resultingforce.y + " force x: " + resultingforce.x);
 
             velocity = velocity + (new Vector3(0f, resultingforce.y, resultingforce.x) * (float)(1 / aircraft.mass) * deltaTime);
 
