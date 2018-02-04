@@ -12,7 +12,8 @@ public class PathHandler : MonoBehaviour {
 	// Use this for initialization
 	public void Awake ()
     {
-        lineRenderer = GameObject.Find("Path").GetComponent<LineRenderer>();
+        
+        lineRenderer = this.transform.GetComponentInChildren<LineRenderer>();
         sim = this.transform.parent.GetComponent<Simulation>();
         interactions = new List<Interaction>();
         interactionMarkers = new List<GameObject>();
@@ -79,8 +80,8 @@ public class PathHandler : MonoBehaviour {
     protected void RenderPath()
     {
         Waypoint[] waypointsArray = waypoints.ToArray();
-        lineRenderer.startWidth = sim.scale;
-        lineRenderer.endWidth = sim.scale;
+        lineRenderer.startWidth = SimulationHandler.scale;
+        lineRenderer.endWidth = SimulationHandler.scale;
         lineRenderer.positionCount = waypointsArray.Length;
         for (int i = 0; i < waypointsArray.Length; i++)
         {

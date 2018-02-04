@@ -31,12 +31,13 @@ public class PlayerUI : MonoBehaviour {
 
     public void Update()
     {
-        timeHigher.text = Convert.ToString((float)Simulation.active.length * Simulation.active.deltaTime) + "s";
-        timeSlider.value = (float)Simulation.active.time * Simulation.active.deltaTime;
-        timeSlider.maxValue = (float)Simulation.active.length * Simulation.active.deltaTime;
+        // todo generalize
+        timeHigher.text = Convert.ToString((float)SimulationHandler.length * SimulationHandler.deltaTime) + "s";
+        timeSlider.value = (float)SimulationHandler.activeSim.time * SimulationHandler.deltaTime;
+        timeSlider.maxValue = (float)SimulationHandler.length * SimulationHandler.deltaTime;
 
 
-        float scale = Mathf.Pow(Simulation.active.scale, -1f);
+        float scale = Mathf.Pow(SimulationHandler.scale, -1f);
         scaleValue.text = "1/" + Convert.ToString(scale);
         scaleSlider.value = scale;
     }
@@ -68,7 +69,7 @@ public class PlayerUI : MonoBehaviour {
 
     public void Rewind()
     {
-        int currentTime = (int) ((float)Simulation.active.time * Simulation.active.deltaTime);
+        int currentTime = (int) ((float)SimulationHandler.activeSim.time * SimulationHandler.deltaTime);
         if (currentTime < 16) {
             EventManager.SetTime(0);
         } else {
@@ -79,8 +80,8 @@ public class PlayerUI : MonoBehaviour {
 
     public void Forward()
     {
-        int currentTime = (int)((float)Simulation.active.time * Simulation.active.deltaTime);
-        int length = (int)((float)Simulation.active.length / Simulation.active.deltaTime);
+        int currentTime = (int)((float)SimulationHandler.activeSim.time * SimulationHandler.deltaTime);
+        int length = (int)((float)SimulationHandler.length / SimulationHandler.deltaTime);
         if (currentTime < length - 15)
         {
             EventManager.SetTime(currentTime + 15);
@@ -104,20 +105,19 @@ public class PlayerUI : MonoBehaviour {
     {
         Debug.Log("time slider changed");
         timeValue.text = Convert.ToString(newTime) + "s";
-        EventManager.SetTime((int) (newTime / Simulation.active.deltaTime));
+        EventManager.SetTime((int) (newTime / SimulationHandler.deltaTime));
     }
 
     public void CreateInteraction()
     {
         Debug.Log("create interaction button pressed");
-        EventManager.CreateInteraction(Simulation.active);
+        EventManager.CreateInteraction(SimulationHandler.activeSim);
     }
 
     public void EditAircraft()
     {
         Debug.Log("edit aircraft button pressed");
-        Simulation sim = Simulation.active;
-        Aircraft aircraft = sim.aircraftHandler.GetAircraft();
-        EventManager.OpenAircraftUI(sim, aircraft);
+        Aircraft aircraft = SimulationHandler.activeSim.aircraftHandler.GetAircraft();
+        EventManager.OpenAircraftUI(SimulationHandler.activeSim, aircraft);
     }
 }

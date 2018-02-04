@@ -3,18 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Simulation : MonoBehaviour {
-    public static Simulation active;
-
     public List<Waypoint> waypoints;
     public AircraftHandler aircraftHandler;
     public PathHandler pathHandler;
     // TODO: windhandler
     public Vector2 windVelocity;
     public int time = 0;
-    public int length = 5000;
-    public float deltaTime = 0.02f;
     public bool play = false;
-    public float scale = 0.01f;
+
 
 
     // Use this for initialization
@@ -27,17 +23,14 @@ public class Simulation : MonoBehaviour {
         EventManager.OnPlay += Play;
         EventManager.OnPause += Pause;
         EventManager.OnSetTime += SetTime;
-        EventManager.OnSetScale += SetScale;
+
         EventManager.OnCreateInteraction += CreateInteraction;
     }
 
-    public void Init(Aircraft aircraft, List<Interaction> interactions, float scale, float deltaTime, int length, Vector2 windVelocity)
+    public void Init(Aircraft aircraft, List<Interaction> interactions, Vector2 windVelocity)
     {
         aircraftHandler.SetAircraft(aircraft);
         pathHandler.SetInteractions(interactions);
-        SetScale(scale);
-        SetDeltaTime(deltaTime);
-        SetLength(length);
         this.windVelocity = windVelocity;
 
         Recalculate();
@@ -59,14 +52,6 @@ public class Simulation : MonoBehaviour {
             Recalculate();
     }
 
-
-    protected void SetScale(float newScale)
-    {
-        scale = newScale;
-        this.transform.localScale = new Vector3(scale, scale, scale);
-        Debug.Log("Scale set");
-    }
-
     protected void Recalculate() {
         CalculateWaypoints();
         UpdatePathHandler();
@@ -82,8 +67,7 @@ public class Simulation : MonoBehaviour {
     }
 
     protected void CalculateWaypoints() {
-        // waypoints = FlightEngine.CalculateWaypoints(aircraftHandler.GetAircraft(), pathHandler.GetInteractions(), windVelocity, deltaTime, length);
-        waypoints = FlightEngine.CalculateWaypoints(aircraftHandler.GetAircraft(), pathHandler.GetInteractions(), windVelocity, deltaTime, length);
+        waypoints = FlightEngine.CalculateWaypoints(aircraftHandler.GetAircraft(), pathHandler.GetInteractions(), windVelocity, SimulationHandler.deltaTime, SimulationHandler.length);
     }
 
     protected void FixedUpdate() {
@@ -93,7 +77,7 @@ public class Simulation : MonoBehaviour {
 
         aircraftHandler.UpdatePosition(time);
 
-        if (play) {
+        if (this.play) {
             time++;
         }
 
@@ -116,18 +100,8 @@ public class Simulation : MonoBehaviour {
         this.time = time;
     }
 
-    protected void SetLength(int length) {
-        this.length = length;
-        // Recalculate(); 
-    }
-
-    protected void SetDeltaTime(float deltaTime)
-    {
-        this.deltaTime = deltaTime;
-    }
-
     public void SetActive()
     {
-        Simulation.active = this;
+        SimulationHandler.activeSim = this;
     }
 }

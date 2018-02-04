@@ -62,4 +62,9 @@ public class Aircraft {
     {
         return cW0;
     }
+
+    public Aircraft Clone()
+    {
+        return (Aircraft) this.MemberwiseClone();
+    }
 }
