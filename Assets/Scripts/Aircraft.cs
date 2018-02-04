@@ -31,7 +31,10 @@ public class Aircraft {
     {
         this.name = name;
         this.cW0 = cW0;
+        this.cW1 = cW1;
+        this.cW2 = cW2;
         this.cA0 = cA0;
+        this.cA1 = cA1;
         this.wingArea = wingArea;
         this.mass = mass;
         this.maxThrust = maxThrust;
@@ -48,5 +51,15 @@ public class Aircraft {
     {
         // return cW0 + 0.017 * Mathf.Pow((float)(CalcCA(angleOfAttack) - cA0), 2);
         return cW0 + cW1 * angleOfAttack + cW2 * Mathd.Pow(angleOfAttack, 2);
+    }
+
+    public double MockCA(double angleOfAttack)
+    {
+        return cA0;
+    }
+
+    public double MockCW(double angleOfAttack)
+    {
+        return cW0;
     }
 }

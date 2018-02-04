@@ -36,6 +36,18 @@ public class EventManager : MonoBehaviour
     public static event OpenPlayerUIAction OnOpenPlayerUI;
     public static event ClosePlayerUIAction OnClosePlayerUI;
 
+    public delegate void OpenAircraftUIAction(Simulation sim, Aircraft aircraft);
+    public delegate void CloseAircraftUIAction();
+
+    public static event OpenAircraftUIAction OnOpenAircraftUI;
+    public static event CloseAircraftUIAction OnCloseAircraftUI;
+
+    public delegate void OpenPolarCurveUIAction(Simulation sim, Aircraft aircraft);
+    public delegate void ClosePolarCurveUIAction();
+
+    public static event OpenPolarCurveUIAction OnOpenPolarCurveUI;
+    public static event ClosePolarCurveUIAction OnClosePolarCurveUI;
+
     public static void AircraftChanged(Simulation sim)
     {
         Debug.Log("aircraft changed");
@@ -88,8 +100,9 @@ public class EventManager : MonoBehaviour
     public static void OpenInteractionUI(Simulation sim, Interaction interaction)
     {
         Debug.Log("open interaction ui");
-        Debug.Log(sim);
-        Debug.Log(interaction);
+
+        CloseAircraftUI();
+        ClosePolarCurveUI();
 
         if (OnOpenInteractionUI != null)
             OnOpenInteractionUI(sim, interaction);
@@ -117,5 +130,42 @@ public class EventManager : MonoBehaviour
 
         if (OnClosePlayerUI != null)
             OnClosePlayerUI();
+    }
+
+    public static void OpenAircraftUI(Simulation sim, Aircraft aircraft)
+    {
+        Debug.Log("open aircraft ui");
+
+        CloseInteractionUI();
+        ClosePolarCurveUI();
+
+        if (OnOpenAircraftUI != null)
+            OnOpenAircraftUI(sim, aircraft);
+    }
+
+    public static void CloseAircraftUI()
+    {
+        Debug.Log("close aircraft ui");
+
+        if (OnCloseAircraftUI != null)
+            OnCloseAircraftUI();
+    }
+
+    public static void OpenPolarCurveUI(Simulation sim, Aircraft aircraft)
+    {
+        Debug.Log("open polar curve ui");
+
+        CloseInteractionUI();
+        CloseAircraftUI();
+
+        if (OnOpenPolarCurveUI != null)
+            OnOpenPolarCurveUI(sim, aircraft);
+    }
+
+    public static void ClosePolarCurveUI()
+    {
+        Debug.Log("close polar curve ui");
+        if (OnClosePolarCurveUI != null)
+            OnClosePolarCurveUI();
     }
 }
