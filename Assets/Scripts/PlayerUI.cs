@@ -7,6 +7,8 @@ using VRTK;
 
 
 public class PlayerUI : MonoBehaviour {
+    Dropdown simSelector;
+
     Slider scaleSlider;
     Text scaleValue;
 
@@ -17,6 +19,9 @@ public class PlayerUI : MonoBehaviour {
     // Use this for initialization
     protected void Awake()
     {
+        // todo make this better
+        simSelector = GameObject.Find("UI/Player/Panel/Controls/SelectSimulationDropdown").GetComponent<Dropdown>();
+
         scaleSlider = GameObject.Find("UI/Player/Panel/Scale/Slider").GetComponent<Slider>();
         scaleValue = GameObject.Find("UI/Player/Panel/Scale/Value").GetComponent<Text>();
 
@@ -27,13 +32,18 @@ public class PlayerUI : MonoBehaviour {
 
         EventManager.OnOpenPlayerUI += Show;
         EventManager.OnClosePlayerUI += Hide;
+        EventManager.OnSimulationsChanged += SimsChanged;
+    }
+
+    protected void Start()
+    {
+        SimsChanged(SimulationHandler.sims);
     }
 
     public void Update()
     {
-        // todo generalize
         timeHigher.text = Convert.ToString((float)SimulationHandler.length * SimulationHandler.deltaTime) + "s";
-        timeSlider.value = (float)SimulationHandler.activeSim.time * SimulationHandler.deltaTime;
+        timeSlider.value = (float)SimulationHandler.time * SimulationHandler.deltaTime;
         timeSlider.maxValue = (float)SimulationHandler.length * SimulationHandler.deltaTime;
 
 
@@ -69,7 +79,7 @@ public class PlayerUI : MonoBehaviour {
 
     public void Rewind()
     {
-        int currentTime = (int) ((float)SimulationHandler.activeSim.time * SimulationHandler.deltaTime);
+        int currentTime = (int) ((float)SimulationHandler.time * SimulationHandler.deltaTime);
         if (currentTime < 16) {
             EventManager.SetTime(0);
         } else {
@@ -80,7 +90,7 @@ public class PlayerUI : MonoBehaviour {
 
     public void Forward()
     {
-        int currentTime = (int)((float)SimulationHandler.activeSim.time * SimulationHandler.deltaTime);
+        int currentTime = (int)((float)SimulationHandler.time * SimulationHandler.deltaTime);
         int length = (int)((float)SimulationHandler.length / SimulationHandler.deltaTime);
         if (currentTime < length - 15)
         {
@@ -101,6 +111,18 @@ public class PlayerUI : MonoBehaviour {
         EventManager.SetScale(1f / newScale);
     }
 
+    public void SimsChanged(List<Simulation> sims)
+    {
+        Debug.Log("simulations changed -> update dropdown");
+        simSelector.ClearOptions();
+        List<Dropdown.OptionData> newOptions = new List<Dropdown.OptionData>();
+        for (int i = 1; i <= sims.Count; i++) 
+        {
+            newOptions.Add(new Dropdown.OptionData("Simulation " + i));
+        }
+        simSelector.AddOptions(newOptions);
+    }
+
     public void TimeChanged(float newTime)
     {
         Debug.Log("time slider changed");
@@ -119,5 +141,17 @@ public class PlayerUI : MonoBehaviour {
         Debug.Log("edit aircraft button pressed");
         Aircraft aircraft = SimulationHandler.activeSim.aircraftHandler.GetAircraft();
         EventManager.OpenAircraftUI(SimulationHandler.activeSim, aircraft);
+    }
+
+    public void SelectActiveSimulation(Dropdown change)
+    {
+        Debug.Log("active simulation changed");
+        SimulationHandler.sims[change.value].SetActive();
+    }
+
+    public void CloneSimulation()
+    {
+        Debug.Log("clone simulation button pressed");
+        EventManager.CloneSimulation(SimulationHandler.activeSim);
     }
 }

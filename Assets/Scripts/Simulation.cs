@@ -10,6 +10,8 @@ public class Simulation : MonoBehaviour {
     public Vector2 windVelocity;
     public int time = 0;
     public bool play = false;
+    public Color color;
+
 
 
 
@@ -20,15 +22,12 @@ public class Simulation : MonoBehaviour {
         waypoints = new List<Waypoint>();
 
         EventManager.OnChange += OnChange;
-        EventManager.OnPlay += Play;
-        EventManager.OnPause += Pause;
-        EventManager.OnSetTime += SetTime;
-
         EventManager.OnCreateInteraction += CreateInteraction;
     }
 
-    public void Init(Aircraft aircraft, List<Interaction> interactions, Vector2 windVelocity)
+    public void Init(Aircraft aircraft, List<Interaction> interactions, Vector2 windVelocity, Color color)
     {
+        this.color = color;
         aircraftHandler.SetAircraft(aircraft);
         pathHandler.SetInteractions(interactions);
         this.windVelocity = windVelocity;
@@ -70,34 +69,8 @@ public class Simulation : MonoBehaviour {
         waypoints = FlightEngine.CalculateWaypoints(aircraftHandler.GetAircraft(), pathHandler.GetInteractions(), windVelocity, SimulationHandler.deltaTime, SimulationHandler.length);
     }
 
-    protected void FixedUpdate() {
-        if (time > waypoints.Count) {
-            ResetSimulator();
-        }
-
-        aircraftHandler.UpdatePosition(time);
-
-        if (this.play) {
-            time++;
-        }
-
-    }
-
-    protected void ResetSimulator() {
-        time = 0;
-        //play = false;
-    }
-
-    protected void Play() {
-        this.play = true;
-    }
-
-    protected void Pause() {
-        this.play = false;
-    }
-
-    protected void SetTime(int time) {
-        this.time = time;
+    public void UpdateSimulation() {
+        aircraftHandler.UpdatePosition(SimulationHandler.time);
     }
 
     public void SetActive()

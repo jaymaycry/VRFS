@@ -80,6 +80,9 @@ public class PathHandler : MonoBehaviour {
     protected void RenderPath()
     {
         Waypoint[] waypointsArray = waypoints.ToArray();
+        lineRenderer.material = new Material(Shader.Find("Mobile/Particles/Additive"));
+        lineRenderer.startColor = sim.color;
+        lineRenderer.endColor = sim.color;
         lineRenderer.startWidth = SimulationHandler.scale;
         lineRenderer.endWidth = SimulationHandler.scale;
         lineRenderer.positionCount = waypointsArray.Length;

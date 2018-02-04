@@ -7,10 +7,17 @@ public class EventManager : MonoBehaviour
     // simulation actions
     public delegate void ChangeAction(Simulation sim);
     public delegate void CreateInteractionAction(Simulation sim);
+    public delegate void CloneSimulationAction(Simulation sim);
+    public delegate void RemoveSimulationAction(Simulation sim);
+    public delegate void SimulationsChangedAction(List<Simulation> sims);
 
     public static event ChangeAction OnChange;
     public static event CreateInteractionAction OnCreateInteraction;
 
+    public static event CloneSimulationAction OnCloneSimulation;
+    public static event RemoveSimulationAction OnRemoveSimulation;
+
+    public static event SimulationsChangedAction OnSimulationsChanged;
 
     // player actions
     public delegate void PlayAction();
@@ -60,6 +67,27 @@ public class EventManager : MonoBehaviour
         Debug.Log("interaction changed");
         if (OnChange != null)
             OnChange(sim);
+    }
+
+    public static void CloneSimulation(Simulation sim)
+    {
+        Debug.Log("simulation cloned");
+        if (OnCloneSimulation != null)
+            OnCloneSimulation(sim);
+    }
+
+    public static void RemoveSimulation(Simulation sim)
+    {
+        Debug.Log("simulation cloned");
+        if (OnRemoveSimulation != null)
+            OnRemoveSimulation(sim);
+    }
+
+    public static void SimulationsChanged(List<Simulation> sims)
+    {
+        Debug.Log("simulations changed");
+        if (OnSimulationsChanged != null)
+            OnSimulationsChanged(sims);
     }
 
     public static void CreateInteraction(Simulation sim)
