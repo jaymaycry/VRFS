@@ -49,10 +49,10 @@ public class SimulationHandler : MonoBehaviour {
         sim.Init(aircraft, interactions, windVelocity, GetColor());
 
         // todo remove this
-        this.CloneSim(sim);
-        this.CloneSim(sim);
+        // this.CloneSim(sim);
+        // this.CloneSim(sim);
 
-        this.RemoveSim(sims[1]);
+        // this.RemoveSim(sims[1]);
 	}
 
     protected void FixedUpdate()
@@ -68,13 +68,15 @@ public class SimulationHandler : MonoBehaviour {
     {
         for (int i = 0; i < sims.Count; i++)
         {
-            sims[i].transform.position = new Vector3(sims.Count * 1f, 0f, 0f);
+            sims[i].transform.localPosition = new Vector3(i * 100f, 0f, 0f);
+            sims[i].transform.name = "Simulation " + (i + 1);
         }
         EventManager.SimulationsChanged(sims);
     }
 
     protected void CloneSim(Simulation sim)
     {
+        Debug.Log("Clone " + sim.name);
         Aircraft aircraftClone = sim.aircraftHandler.GetAircraft().Clone();
 
         List<Interaction> interactionClones = new List<Interaction>();
@@ -82,7 +84,7 @@ public class SimulationHandler : MonoBehaviour {
 
         Vector2 windVelocity = new Vector2(-0.5f, 0f);
 
-        Simulation clone = ((GameObject)Instantiate(Resources.Load("Simulation"), new Vector3(sims.Count * 1f, 0f, 0f), Quaternion.Euler(0f, 0f, 0f), this.transform)).GetComponent<Simulation>();
+        Simulation clone = ((GameObject)Instantiate(Resources.Load("Simulation"), new Vector3(0f, 0f, 0f), Quaternion.Euler(0f, 0f, 0f), this.transform)).GetComponent<Simulation>();
         sims.Add(clone);
         clone.SetActive();
         clone.Init(aircraftClone, interactionClones, windVelocity, GetColor());

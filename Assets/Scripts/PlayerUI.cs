@@ -20,7 +20,7 @@ public class PlayerUI : MonoBehaviour {
     protected void Awake()
     {
         // todo make this better
-        simSelector = GameObject.Find("UI/Player/Panel/Controls/SelectSimulationDropdown").GetComponent<Dropdown>();
+        simSelector = GameObject.Find("UI/Player/Panel/SimActions/SelectSimulationDropdown").GetComponent<Dropdown>();
 
         scaleSlider = GameObject.Find("UI/Player/Panel/Scale/Slider").GetComponent<Slider>();
         scaleValue = GameObject.Find("UI/Player/Panel/Scale/Value").GetComponent<Text>();
@@ -40,10 +40,12 @@ public class PlayerUI : MonoBehaviour {
         SimsChanged(SimulationHandler.sims);
     }
 
-    public void Update()
+    public void FixedUpdate()
     {
+        float newTime = (float)SimulationHandler.time * SimulationHandler.deltaTime;
         timeHigher.text = Convert.ToString((float)SimulationHandler.length * SimulationHandler.deltaTime) + "s";
-        timeSlider.value = (float)SimulationHandler.time * SimulationHandler.deltaTime;
+        timeSlider.value = newTime;
+        timeValue.text = Convert.ToString((int)newTime) + "s";
         timeSlider.maxValue = (float)SimulationHandler.length * SimulationHandler.deltaTime;
 
 
@@ -114,22 +116,28 @@ public class PlayerUI : MonoBehaviour {
     public void SimsChanged(List<Simulation> sims)
     {
         Debug.Log("simulations changed -> update dropdown");
+        Debug.Log(sims.Count);
+        int selected = 0;
         simSelector.ClearOptions();
-        List<Dropdown.OptionData> newOptions = new List<Dropdown.OptionData>();
-        for (int i = 1; i <= sims.Count; i++) 
+        List<string> newOptions = new List<string>();
+        for (int i = 0; i < sims.Count; i++) 
         {
-            newOptions.Add(new Dropdown.OptionData("Simulation " + i));
+            if (sims[i] == SimulationHandler.activeSim) {
+                selected = i;
+            }
+            newOptions.Add("Simulation " + (i + 1));
         }
         simSelector.AddOptions(newOptions);
+        simSelector.value = selected;
     }
 
     public void TimeChanged(float newTime)
     {
         Debug.Log("time slider changed");
         timeValue.text = Convert.ToString(newTime) + "s";
-        EventManager.SetTime((int) (newTime / SimulationHandler.deltaTime));
+        EventManager.SetTime((int)(newTime / SimulationHandler.deltaTime));
     }
-
+                                          
     public void CreateInteraction()
     {
         Debug.Log("create interaction button pressed");
@@ -143,15 +151,21 @@ public class PlayerUI : MonoBehaviour {
         EventManager.OpenAircraftUI(SimulationHandler.activeSim, aircraft);
     }
 
-    public void SelectActiveSimulation(Dropdown change)
+    public void SelectActiveSimulation(Dropdown dropdown)
     {
-        Debug.Log("active simulation changed");
-        SimulationHandler.sims[change.value].SetActive();
+        Debug.Log("active simulation changed to " + dropdown.value);
+        SimulationHandler.sims[dropdown.value].SetActive();
     }
 
     public void CloneSimulation()
     {
         Debug.Log("clone simulation button pressed");
         EventManager.CloneSimulation(SimulationHandler.activeSim);
+    }
+
+    public void DeleteSimulation()
+    {
+        Debug.Log("delete simulation button pressed");
+        EventManager.RemoveSimulation(SimulationHandler.activeSim);
     }
 }

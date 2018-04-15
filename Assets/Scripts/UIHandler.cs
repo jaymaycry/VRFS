@@ -36,11 +36,13 @@ public class UIHandler : MonoBehaviour {
 
     private void TriggerPressed(object sender, ControllerInteractionEventArgs e)
     {
+        Debug.Log("open player ui");
         EventManager.OpenPlayerUI();
     }
 
     private void TriggerReleased(object sender, ControllerInteractionEventArgs e)
     {
+        Debug.Log("close player ui");
         EventManager.ClosePlayerUI();
     }
 }

@@ -75,6 +75,7 @@ public class Simulation : MonoBehaviour {
 
     public void SetActive()
     {
+        Debug.Log("set active sim");
         SimulationHandler.activeSim = this;
     }
 }
