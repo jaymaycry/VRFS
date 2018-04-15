@@ -44,6 +44,7 @@ public class SimulationHandler : MonoBehaviour {
 
         // create sim instance
         Simulation sim = ((GameObject)Instantiate(Resources.Load("Simulation"), new Vector3(0f,0f,0f), Quaternion.Euler(0f, 0f, 0f), this.transform)).GetComponent<Simulation>();
+        sim.name = "Simulation 1";
         sims.Add(sim);
         sim.SetActive();
         sim.Init(aircraft, interactions, windVelocity, GetColor());
