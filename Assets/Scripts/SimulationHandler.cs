@@ -16,7 +16,7 @@ public class SimulationHandler : MonoBehaviour {
 
     private void Awake()
     {
-        colors.Add(Color.yellow);
+        colors.Add(new Color(1f, 0.6827586f, 0f));
         colors.Add(Color.blue);
         colors.Add(Color.green);
         colors.Add(Color.red);
@@ -47,12 +47,6 @@ public class SimulationHandler : MonoBehaviour {
         sims.Add(sim);
         sim.SetActive();
         sim.Init(aircraft, interactions, windVelocity, GetColor());
-
-        // todo remove this
-        // this.CloneSim(sim);
-        // this.CloneSim(sim);
-
-        // this.RemoveSim(sims[1]);
 	}
 
     protected void FixedUpdate()
@@ -94,9 +88,9 @@ public class SimulationHandler : MonoBehaviour {
 
     protected void RemoveSim(Simulation sim)
     {
-        // return color
-        colors.Add(sim.color);
         sims.Remove(sim);
+        sims[sims.Count - 1].SetActive();
+        colors.Add(sim.color);
         Destroy(sim.gameObject);
         SimsChanged();
     }

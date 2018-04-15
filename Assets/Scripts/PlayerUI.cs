@@ -16,6 +16,9 @@ public class PlayerUI : MonoBehaviour {
     Text timeValue;
     Text timeHigher;
 
+    Button deleteButton;
+    Button cloneButton;
+
     // Use this for initialization
     protected void Awake()
     {
@@ -28,6 +31,9 @@ public class PlayerUI : MonoBehaviour {
         timeSlider = GameObject.Find("UI/Player/Panel/Time/Slider").GetComponent<Slider>();
         timeValue = GameObject.Find("UI/Player/Panel/Time/Value").GetComponent<Text>();
         timeHigher = GameObject.Find("UI/Player/Panel/Time/HigherBound").GetComponent<Text>();
+
+        deleteButton = GameObject.Find("UI/Player/Panel/SimActions/DeleteSimulationButton").GetComponent<Button>();
+        cloneButton = GameObject.Find("UI/Player/Panel/SimActions/CloneSimulationButton").GetComponent<Button>();
 
 
         EventManager.OnOpenPlayerUI += Show;
@@ -117,6 +123,8 @@ public class PlayerUI : MonoBehaviour {
     {
         Debug.Log("simulations changed -> update dropdown");
         Debug.Log(sims.Count);
+        deleteButton.interactable = (sims.Count > 1);
+        cloneButton.interactable = (sims.Count < 5);
         int selected = 0;
         simSelector.ClearOptions();
         List<string> newOptions = new List<string>();
