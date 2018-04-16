@@ -19,4 +19,9 @@ public class Interaction {
     public Interaction(double pitch, double thrust, int time): this(pitch, thrust, time, false)
     {
     }
+
+    public Interaction Clone()
+    {
+        return (Interaction)this.MemberwiseClone();
+    }
 }

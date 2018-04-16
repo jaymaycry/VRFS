@@ -10,16 +10,18 @@ public class AircraftHandler : MonoBehaviour {
 
     // aircraft models
     protected GameObject smallAircraft;
+    protected GameObject largeAircraft;
 
     public void Awake()
     {
         sim = this.transform.parent.GetComponent<Simulation>();
         smallAircraft = GameObject.Find("AircraftHandler/Cessna");
+        largeAircraft = GameObject.Find("AircraftHandler/b747");
     }
 
     public void Start()
     {
-        ShowModel(smallAircraft);
+        ShowModel(largeAircraft);
     }
 
     public void SetAircraft(Aircraft aircraft)

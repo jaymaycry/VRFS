@@ -43,18 +43,18 @@ public class InteractionUI : MonoBehaviour
         pitchSlider.value = (float)interaction.pitch;
         thrustSlider.value = (float)interaction.thrust * 100f;
 
-        timeSlider.value = (float)interaction.time * sim.deltaTime;
-        timeSlider.maxValue = sim.length * sim.deltaTime;
+        timeSlider.value = (float)interaction.time * SimulationHandler.deltaTime;
+        timeSlider.maxValue = SimulationHandler.length * SimulationHandler.deltaTime;
 
         UpdateValue();
     }
 
     protected void UpdateValue()
     {
-        timeHigher.text = Convert.ToString(sim.length * sim.deltaTime) + "s";
+        timeHigher.text = Convert.ToString(SimulationHandler.length * SimulationHandler.deltaTime) + "s";
         pitchValue.text = Convert.ToString(interaction.pitch) + "°";
         thrustValue.text = Convert.ToString(interaction.thrust * 100) + "%";
-        timeValue.text = Convert.ToString((int)interaction.time * sim.deltaTime) + "s";
+        timeValue.text = Convert.ToString((int)interaction.time * SimulationHandler.deltaTime) + "s";
     }
 
     public void Open(Simulation sim, Interaction interaction)
@@ -109,7 +109,7 @@ public class InteractionUI : MonoBehaviour
     {
         Debug.Log("time changed");
         timeValue.text = Convert.ToString(newTime) + "s";
-        interaction.time = (int)(newTime / sim.deltaTime);
+        interaction.time = (int)(newTime / SimulationHandler.deltaTime);
         UpdateValue();
         EventManager.InteractionChanged(sim);
     }
