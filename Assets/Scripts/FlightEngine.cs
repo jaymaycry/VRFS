@@ -46,13 +46,17 @@ public static class FlightEngine
     // gamma
     private static double CalcSlope(Vector2 trajectory)
     {
-        return Vector2.Angle(new Vector2(1, 0), trajectory);
+        return Vector2.Angle(new Vector2(-1, 0), trajectory);
     }
 
     // alpha
     private static double CalcAngleOfAttack(double pitch, Vector2 trajectory)
     {
-        return pitch - CalcSlope(trajectory);
+        //pitch = anstellwinkel Flugzeug
+        //trajectory = resultingforce
+        //CalcSlope = winkel zwischen (1,0) und resultingforce
+        double angleOfAttack = pitch - CalcSlope(trajectory);
+        return angleOfAttack;
     }
 
     /**
@@ -144,6 +148,25 @@ public static class FlightEngine
             Vector2 resultingforce = drag + lift + gravity + thrust;
 
             // TODO clean this ugly hacks
+
+            /*
+             * Sei position y = 0 => grounded = true
+             * Sei position y > 0 =>
+             *      sei grounded = true =>
+             *      grounded false
+             *      
+             *      sei grounded = false =>
+             *      grounded True
+             *      
+             *      also wen y grosser 0 ist und grounded false ist, wird grounded true. sinn?
+             *      
+             *      Vorschlag: 
+             *     
+             *     */
+            if (position.y <= 0 && grounded) {grounded = true;}
+                  else {grounded = false;}
+            /* * anstatt
+            *
             if (position.y > 0 && grounded)
             {
                 grounded = false;
@@ -152,6 +175,7 @@ public static class FlightEngine
             {
                 grounded = true;
             }
+            */
             // prevent sinking
             if (resultingforce.y < 0 && grounded)
             {
