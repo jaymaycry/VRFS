@@ -46,7 +46,7 @@ public static class FlightEngine
     // gamma
     private static double CalcSlope(Vector2 trajectory)
     {
-        return Vector2.Angle(new Vector2(-1, 0), trajectory);
+        return Vector2.Angle(new Vector2(1, 0), trajectory);
     }
 
     // alpha
@@ -55,7 +55,7 @@ public static class FlightEngine
         //pitch = anstellwinkel Flugzeug
         //trajectory = resultingforce
         //CalcSlope = winkel zwischen (1,0) und resultingforce
-        double angleOfAttack = pitch - CalcSlope(trajectory);
+        double angleOfAttack = (180 + pitch - CalcSlope(trajectory))%180;
         return angleOfAttack;
     }
 
@@ -149,33 +149,10 @@ public static class FlightEngine
 
             // TODO clean this ugly hacks
 
-            /*
-             * Sei position y = 0 => grounded = true
-             * Sei position y > 0 =>
-             *      sei grounded = true =>
-             *      grounded false
-             *      
-             *      sei grounded = false =>
-             *      grounded True
-             *      
-             *      also wen y grosser 0 ist und grounded false ist, wird grounded true. sinn?
-             *      
-             *      Vorschlag: 
-             *     
-             *     */
+          
             if (position.y <= 0 && grounded) {grounded = true;}
                   else {grounded = false;}
-            /* * anstatt
-            *
-            if (position.y > 0 && grounded)
-            {
-                grounded = false;
-            }
-            else
-            {
-                grounded = true;
-            }
-            */
+    
             // prevent sinking
             if (resultingforce.y < 0 && grounded)
             {
@@ -187,7 +164,7 @@ public static class FlightEngine
             cw = aircraft.CalcCA(angleOfAttack);
             ca = aircraft.CalcCW(angleOfAttack);
             // Debug.Log("pitch: " + pitch + " resultingforce: " + resultingforce + " = angle of attack: " + angleOfAttack);
-            Debug.Log("i:" + i + " ca:" + ca + " cw:" + cw + " pitch: " + pitch + " angle of attack:" + angleOfAttack + " force y:" + resultingforce.y + " force x: " + resultingforce.x);
+            Debug.Log("i:" + i + " ca:" + ca + " cw:" + cw + " pitch: " + pitch + " angle of attack:" + angleOfAttack + " force y:" + resultingforce.y + " force x:" + resultingforce.x + " drag x:" + drag.x + " lift x:" + lift.x + " gravity x:" + gravity.x + " thrust x:" + thrust.x );
 
             velocity = velocity + (new Vector3(0f, resultingforce.y, resultingforce.x) * (float)(1 / aircraft.mass) * deltaTime);
 
