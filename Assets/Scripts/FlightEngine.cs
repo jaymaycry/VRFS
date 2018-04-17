@@ -96,19 +96,13 @@ public static class FlightEngine
         return interpolated;
     }
 
-    //TODO alle Roh() durch Roh(h, t) ersetzten
-    public static double Roh()
+    public static double Roh(double height, double temperature)
     {
-        return 1.2;
+        height = height + 153.85 * (temperature - 20); //t = 20°C ist der normalfall, bei abweichung berechnen wir die höhe relativ zur gegebenen Temperatur
+        return 1.247015 * Mathd.Exp(-0.000104 * height);
     }
 
-    public static double Roh(double h, double t)
-    {
-        h = h + 153.85 * (t - 20); //t = 20°C ist der normalfall, bei abweichung berechnen wir die höhe relativ zur gegebenen Temperatur
-        return 1.247015 * Mathd.Exp(-0.000104 * h);
-    }
-
-    public static List<Waypoint> CalculateWaypoints(Aircraft aircraft, List<Interaction> interactions, Vector2 windVelocity, float deltaTime, int steps)
+    public static List<Waypoint> CalculateWaypoints(Aircraft aircraft, List<Interaction> interactions, Vector2 windVelocity, double metersAboveSeaLevel, double temperature, float deltaTime, int steps)
     {
         List<Waypoint> waypoints = new List<Waypoint>();
 
@@ -138,8 +132,8 @@ public static class FlightEngine
 
             Vector2 aircraftWindVelocity = new Vector2(-velocity.z, -velocity.y);
 
-            Vector2 drag = CalcDrag(aircraft, windVelocity, aircraftWindVelocity, cw, Roh());
-            Vector2 lift = CalcLift(aircraft, windVelocity, aircraftWindVelocity, ca, Roh());
+            Vector2 drag = CalcDrag(aircraft, windVelocity, aircraftWindVelocity, cw, Roh(position.y + metersAboveSeaLevel, temperature));
+            Vector2 lift = CalcLift(aircraft, windVelocity, aircraftWindVelocity, ca, Roh(position.y + metersAboveSeaLevel, temperature));
             Vector2 gravity = CalcGravity(aircraft.mass);
             Vector2 thrust = CalcThrust(aircraft, pitch, thrustFactor);
 

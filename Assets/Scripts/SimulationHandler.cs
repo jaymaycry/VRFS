@@ -47,7 +47,7 @@ public class SimulationHandler : MonoBehaviour {
         sim.name = "Simulation 1";
         sims.Add(sim);
         sim.SetActive();
-        sim.Init(aircraft, interactions, windVelocity, GetColor());
+        sim.Init(aircraft, interactions, windVelocity, 0d, 20d, GetColor());
 	}
 
     protected void FixedUpdate()
@@ -77,12 +77,12 @@ public class SimulationHandler : MonoBehaviour {
         List<Interaction> interactionClones = new List<Interaction>();
         sim.pathHandler.GetInteractions().ForEach((interaction) => interactionClones.Add(interaction.Clone()));
 
-        Vector2 windVelocity = new Vector2(-0.5f, 0f);
+        Vector2 windVelocity = new Vector2(sim.windVelocity.x, sim.windVelocity.y);
 
         Simulation clone = ((GameObject)Instantiate(Resources.Load("Simulation"), new Vector3(0f, 0f, 0f), Quaternion.Euler(0f, 0f, 0f), this.transform)).GetComponent<Simulation>();
         sims.Add(clone);
         clone.SetActive();
-        clone.Init(aircraftClone, interactionClones, windVelocity, GetColor());
+        clone.Init(aircraftClone, interactionClones, windVelocity, sim.metersAboveSeaLevel, sim.temperature, GetColor());
 
         SimsChanged();
     }
