@@ -10,7 +10,6 @@ public static class FlightEngine
     private static Vector2 CalcDrag(Aircraft aircraft, Vector2 windVelocity, Vector2 aircraftWindVelocity, double cw, double roh)
     {
         Vector2 windVelocityTotal = windVelocity + aircraftWindVelocity;
-
         float help = (float)(cw * (roh / 2.0) * aircraft.wingArea * windVelocityTotal.magnitude);
         return new Vector2(help * windVelocityTotal.x, help * windVelocityTotal.y);
     }
@@ -19,7 +18,6 @@ public static class FlightEngine
     private static Vector2 CalcLift(Aircraft aircraft, Vector2 windVelocity, Vector2 aircraftWindVelocity, double ca, double roh)
     {
         Vector2 windVelocityTotal = windVelocity + aircraftWindVelocity;
-
         float help = (float)(ca * (roh / 2.0) * aircraft.wingArea * windVelocityTotal.magnitude);
         return new Vector2(help * windVelocityTotal.y, -help * windVelocityTotal.x);
     }
@@ -138,7 +136,7 @@ public static class FlightEngine
             pitch = interpolatedInteractions[i].pitch;
             thrustFactor = interpolatedInteractions[i].thrust;
 
-            var aircraftWindVelocity = new Vector2(-velocity.z, -velocity.y);
+            Vector2 aircraftWindVelocity = new Vector2(-velocity.z, -velocity.y);
 
             Vector2 drag = CalcDrag(aircraft, windVelocity, aircraftWindVelocity, cw, Roh());
             Vector2 lift = CalcLift(aircraft, windVelocity, aircraftWindVelocity, ca, Roh());
@@ -159,12 +157,12 @@ public static class FlightEngine
                 resultingforce.y = 0;
             }
 
-            angleOfAttack = CalcAngleOfAttack(pitch, resultingforce);
+            angleOfAttack = CalcAngleOfAttack(pitch, new Vector2(velocity.z, velocity.y));
             // todo fix this....
             cw = aircraft.CalcCA(angleOfAttack);
             ca = aircraft.CalcCW(angleOfAttack);
             // Debug.Log("pitch: " + pitch + " resultingforce: " + resultingforce + " = angle of attack: " + angleOfAttack);
-            Debug.Log("i:" + i + " ca:" + ca + " cw:" + cw + " pitch: " + pitch + " angle of attack:" + angleOfAttack + " force y:" + resultingforce.y + " force x:" + resultingforce.x + " drag x:" + drag.x + " lift x:" + lift.x + " gravity x:" + gravity.x + " thrust x:" + thrust.x );
+            Debug.Log("i:" + i + " ca:" + ca + " cw:" + cw + " pitch: " + pitch + " angle of attack:" + angleOfAttack + " force:" + resultingforce + " drag:" + drag + " lift:" + lift + " gravity:" + gravity + " thrust:" + thrust + " lift:" + lift + " velocity:" + velocity);
 
             velocity = velocity + (new Vector3(0f, resultingforce.y, resultingforce.x) * (float)(1 / aircraft.mass) * deltaTime);
 

@@ -33,11 +33,11 @@ public class SimulationHandler : MonoBehaviour {
     // Use this for initialization
     void Start () {
         // create default values for first simulation
-        Aircraft aircraft = new Aircraft("b787", 0.11, 0.03, 0.2, 0.6, 2, 325, 200000, 324000, 2);
+        Aircraft aircraft = new Aircraft("b787", 0.11, 0.05, 0.45, 0.6, 3, 377, 200000, 340000, 2);
         List<Interaction> interactions = new List<Interaction>();
         interactions.Add(new Interaction(0, 1, 1));
-        interactions.Add(new Interaction(7, 1, 1500));
-        Vector2 windVelocity = new Vector2(-0.5f, 0f);
+        interactions.Add(new Interaction(7, 1, 2500));
+        Vector2 windVelocity = new Vector2(0f, 0f);
 
         // scale the sim handler
         SetScale(scale);
