@@ -36,7 +36,7 @@ public class SimulationHandler : MonoBehaviour {
         Aircraft aircraft = new Aircraft("b787", 0.11, 0.05, 0.45, 0.6, 3, 377, 200000, 340000, 2);
         List<Interaction> interactions = new List<Interaction>();
         interactions.Add(new Interaction(0, 1, 1));
-        interactions.Add(new Interaction(7, 1, 2500));
+        interactions.Add(new Interaction(7, 1, 1500));
         Vector2 windVelocity = new Vector2(0f, 0f);
 
         // scale the sim handler

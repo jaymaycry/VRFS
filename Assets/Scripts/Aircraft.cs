@@ -55,14 +55,16 @@ public class Aircraft {
         return cW0 + cW1 * angleOfAttackRad + cW2 * Mathd.Pow(angleOfAttackRad, 2);
     }
 
-    public double MockCA(double angleOfAttack)
+    public double CalcCADegree(double angleOfAttack)
     {
-        return cA0;
+        //return 0.0549 * angleOfAttack + cA0;
+        return cA1 * angleOfAttack + cA0;
     }
 
-    public double MockCW(double angleOfAttack)
+    public double CalcCWDegree(double angleOfAttack)
     {
-        return cW0;
+        // return cW0 + 0.017 * Mathf.Pow((float)(CalcCA(angleOfAttack) - cA0), 2);
+        return cW0 + cW1 * angleOfAttack + cW2 * Mathd.Pow(angleOfAttack, 2);
     }
 
     public Aircraft Clone()
