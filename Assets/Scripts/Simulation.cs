@@ -8,6 +8,8 @@ public class Simulation : MonoBehaviour {
     public PathHandler pathHandler;
     // TODO: windhandler
     public Vector2 windVelocity;
+    public double metersAboveSeaLevel = 0d;
+    public double temperature = 20d;
     public int time = 0;
     public bool play = false;
     public Color color;
@@ -25,12 +27,14 @@ public class Simulation : MonoBehaviour {
         EventManager.OnCreateInteraction += CreateInteraction;
     }
 
-    public void Init(Aircraft aircraft, List<Interaction> interactions, Vector2 windVelocity, Color color)
+    public void Init(Aircraft aircraft, List<Interaction> interactions, Vector2 windVelocity, double metersAboveSeaLevel, double temperature, Color color)
     {
         this.color = color;
+        this.temperature = temperature;
+        this.metersAboveSeaLevel = metersAboveSeaLevel;
+        this.windVelocity = windVelocity;
         aircraftHandler.SetAircraft(aircraft);
         pathHandler.SetInteractions(interactions);
-        this.windVelocity = windVelocity;
 
         Recalculate();
     }
@@ -66,7 +70,7 @@ public class Simulation : MonoBehaviour {
     }
 
     protected void CalculateWaypoints() {
-        waypoints = FlightEngine.CalculateWaypoints(aircraftHandler.GetAircraft(), pathHandler.GetInteractions(), windVelocity, SimulationHandler.deltaTime, SimulationHandler.length);
+        waypoints = FlightEngine.CalculateWaypoints(aircraftHandler.GetAircraft(), pathHandler.GetInteractions(), windVelocity, metersAboveSeaLevel, temperature, SimulationHandler.deltaTime, SimulationHandler.length);
     }
 
     public void UpdateSimulation() {

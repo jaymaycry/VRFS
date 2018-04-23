@@ -81,10 +81,10 @@ public class PathHandler : MonoBehaviour {
     {
         Waypoint[] waypointsArray = waypoints.ToArray();
         Material pathMaterial = new Material(Shader.Find("Standard"));
-        pathMaterial.EnableKeyword("_EMISSION");
         pathMaterial.SetColor("_Color", sim.color);
-        pathMaterial.SetColor("_EmissionColor", sim.color);
         pathMaterial.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
+        pathMaterial.SetColor("_EmissionColor", sim.color);
+        pathMaterial.EnableKeyword("_EMISSION");
         lineRenderer.material = pathMaterial;
         lineRenderer.startWidth = SimulationHandler.scale;
         lineRenderer.endWidth = SimulationHandler.scale;

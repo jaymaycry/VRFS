@@ -77,17 +77,15 @@ public class PolarCurveUI : MonoBehaviour {
         cW1Value.text = aircraft.cW1.ToString();
         cW2Value.text = aircraft.cW2.ToString();
 
-        m30g.transform.localPosition    = new Vector3((float)aircraft.CalcCW(-30d), (float)aircraft.CalcCA(-30d),   0f);
-        m15g.transform.localPosition    = new Vector3((float)aircraft.CalcCW(-15d), (float)aircraft.CalcCA(-15d),   0f);
-        m10g.transform.localPosition    = new Vector3((float)aircraft.CalcCW(-10d), (float)aircraft.CalcCA(-10d),   0f);
-        m5g.transform.localPosition     = new Vector3((float)aircraft.CalcCW(-5d),  (float)aircraft.CalcCA(-5d),    0f);
-        p0g.transform.localPosition     = new Vector3((float)aircraft.CalcCW(0d),   (float)aircraft.CalcCA(0d),     0f);
-        p5g.transform.localPosition     = new Vector3((float)aircraft.CalcCW(5d),   (float)aircraft.CalcCA(5d),     0f);
-        p10g.transform.localPosition    = new Vector3((float)aircraft.CalcCW(10d),  (float)aircraft.CalcCA(10d),    0f);
-        p15g.transform.localPosition    = new Vector3((float)aircraft.CalcCW(15d),  (float)aircraft.CalcCA(15d),    0f);
-        p30g.transform.localPosition    = new Vector3((float)aircraft.CalcCW(30d),  (float)aircraft.CalcCA(30d),    0f);
-
-
+        m30g.transform.localPosition    = new Vector3((float)aircraft.CalcCWDegree(-30d), (float)aircraft.CalcCADegree(-30d),   0f);
+        m15g.transform.localPosition    = new Vector3((float)aircraft.CalcCWDegree(-15d), (float)aircraft.CalcCADegree(-15d),   0f);
+        m10g.transform.localPosition    = new Vector3((float)aircraft.CalcCWDegree(-10d), (float)aircraft.CalcCADegree(-10d),   0f);
+        m5g.transform.localPosition     = new Vector3((float)aircraft.CalcCWDegree(-5d),  (float)aircraft.CalcCADegree(-5d),    0f);
+        p0g.transform.localPosition     = new Vector3((float)aircraft.CalcCWDegree(0d),   (float)aircraft.CalcCADegree(0d),     0f);
+        p5g.transform.localPosition     = new Vector3((float)aircraft.CalcCWDegree(5d),   (float)aircraft.CalcCADegree(5d),     0f);
+        p10g.transform.localPosition    = new Vector3((float)aircraft.CalcCWDegree(10d),  (float)aircraft.CalcCADegree(10d),    0f);
+        p15g.transform.localPosition    = new Vector3((float)aircraft.CalcCWDegree(15d),  (float)aircraft.CalcCADegree(15d),    0f);
+        p30g.transform.localPosition    = new Vector3((float)aircraft.CalcCWDegree(30d),  (float)aircraft.CalcCADegree(30d),    0f);
     }
 
     public void Open(Simulation sim, Aircraft aircraft)

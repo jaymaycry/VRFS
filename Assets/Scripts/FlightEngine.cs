@@ -10,7 +10,6 @@ public static class FlightEngine
     private static Vector2 CalcDrag(Aircraft aircraft, Vector2 windVelocity, Vector2 aircraftWindVelocity, double cw, double roh)
     {
         Vector2 windVelocityTotal = windVelocity + aircraftWindVelocity;
-
         float help = (float)(cw * (roh / 2.0) * aircraft.wingArea * windVelocityTotal.magnitude);
         return new Vector2(help * windVelocityTotal.x, help * windVelocityTotal.y);
     }
@@ -19,7 +18,6 @@ public static class FlightEngine
     private static Vector2 CalcLift(Aircraft aircraft, Vector2 windVelocity, Vector2 aircraftWindVelocity, double ca, double roh)
     {
         Vector2 windVelocityTotal = windVelocity + aircraftWindVelocity;
-
         float help = (float)(ca * (roh / 2.0) * aircraft.wingArea * windVelocityTotal.magnitude);
         return new Vector2(help * windVelocityTotal.y, -help * windVelocityTotal.x);
     }
@@ -94,19 +92,13 @@ public static class FlightEngine
         return interpolated;
     }
 
-    //TODO alle Roh() durch Roh(h, t) ersetzten
-    public static double Roh()
+    public static double Roh(double height, double temperature)
     {
-        return 1.2;
+        height = height + 153.85 * (temperature - 20); //t = 20°C ist der normalfall, bei abweichung berechnen wir die höhe relativ zur gegebenen Temperatur
+        return 1.247015 * Mathd.Exp(-0.000104 * height);
     }
 
-    public static double Roh(double h, double t)
-    {
-        h = h + 153.85 * (t - 20); //t = 20°C ist der normalfall, bei abweichung berechnen wir die höhe relativ zur gegebenen Temperatur
-        return 1.247015 * Mathd.Exp(-0.000104 * h);
-    }
-
-    public static List<Waypoint> CalculateWaypoints(Aircraft aircraft, List<Interaction> interactions, Vector2 windVelocity, float deltaTime, int steps)
+    public static List<Waypoint> CalculateWaypoints(Aircraft aircraft, List<Interaction> interactions, Vector2 windVelocity, double metersAboveSeaLevel, double temperature, float deltaTime, int steps)
     {
         List<Waypoint> waypoints = new List<Waypoint>();
 
@@ -117,11 +109,8 @@ public static class FlightEngine
         bool grounded = true;
         double thrustFactor = 0;
         double angleOfAttack = 0;
-        double cw = 0;//aircraft.cW0;
-        double ca = 0;//aircraft.cA0;
-        //TODO Luftdichte berechnen abhängig Temperatur und Höhe und Luftfeuchtigkeit
-
-
+        double cw = 0;
+        double ca = 0;
 
         // interpolate instructions
         List<Interaction> interpolatedInteractions = InterpolateInteractions(interactions, steps);
@@ -134,35 +123,30 @@ public static class FlightEngine
             pitch = interpolatedInteractions[i].pitch;
             thrustFactor = interpolatedInteractions[i].thrust;
 
-            var aircraftWindVelocity = new Vector2(-velocity.z, -velocity.y);
+            Vector2 aircraftWindVelocity = new Vector2(-velocity.z, -velocity.y);
 
-            Vector2 drag = CalcDrag(aircraft, windVelocity, aircraftWindVelocity, cw, Roh());
-            Vector2 lift = CalcLift(aircraft, windVelocity, aircraftWindVelocity, ca, Roh());
+            Vector2 drag = CalcDrag(aircraft, windVelocity, aircraftWindVelocity, cw, Roh(position.y + metersAboveSeaLevel, temperature));
+            Vector2 lift = CalcLift(aircraft, windVelocity, aircraftWindVelocity, ca, Roh(position.y + metersAboveSeaLevel, temperature));
             Vector2 gravity = CalcGravity(aircraft.mass);
             Vector2 thrust = CalcThrust(aircraft, pitch, thrustFactor);
 
             Vector2 resultingforce = drag + lift + gravity + thrust;
 
-            // TODO clean this ugly hacks
-            if (position.y > 0 && grounded)
-            {
-                grounded = false;
-            }
-            else
-            {
-                grounded = true;
-            }
+            // check if ground hit
+            grounded = (position.y <= 0);
+    
             // prevent sinking
             if (resultingforce.y < 0 && grounded)
             {
                 resultingforce.y = 0;
             }
 
-            angleOfAttack = CalcAngleOfAttack(pitch, resultingforce);
+            angleOfAttack = CalcAngleOfAttack(pitch, new Vector2(velocity.z, velocity.y));
             // todo fix this....
-            cw = aircraft.MockCW(angleOfAttack);
-            ca = aircraft.MockCA(angleOfAttack);
-            //Debug.Log("i:" + i + " ca:" + ca + " cw:" + cw + " angle of attack:" + angleOfAttack + " force y:" + resultingforce.y + " force x: " + resultingforce.x);
+            cw = aircraft.CalcCW(angleOfAttack);
+            ca = aircraft.CalcCA(angleOfAttack);
+            // Debug.Log("pitch: " + pitch + " resultingforce: " + resultingforce + " = angle of attack: " + angleOfAttack);
+            // Debug.Log("i:" + i + " ca:" + ca + " cw:" + cw + " pitch: " + pitch + " angle of attack:" + angleOfAttack + " force:" + resultingforce + " drag:" + drag + " lift:" + lift + " gravity:" + gravity + " thrust:" + thrust + " velocity:" + velocity);
 
             velocity = velocity + (new Vector3(0f, resultingforce.y, resultingforce.x) * (float)(1 / aircraft.mass) * deltaTime);
 
