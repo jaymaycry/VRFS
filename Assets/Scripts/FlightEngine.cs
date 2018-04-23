@@ -50,11 +50,7 @@ public static class FlightEngine
     // alpha
     private static double CalcAngleOfAttack(double pitch, Vector2 trajectory)
     {
-        //pitch = anstellwinkel Flugzeug
-        //trajectory = resultingforce
-        //CalcSlope = winkel zwischen (1,0) und resultingforce
-        double angleOfAttack = pitch - CalcSlope(trajectory);
-        return angleOfAttack;
+        return pitch - CalcSlope(trajectory);
     }
 
     /**
@@ -113,11 +109,8 @@ public static class FlightEngine
         bool grounded = true;
         double thrustFactor = 0;
         double angleOfAttack = 0;
-        double cw = 0;//aircraft.cW0;
-        double ca = 0;//aircraft.cA0;
-        //TODO Luftdichte berechnen abhängig Temperatur und Höhe und Luftfeuchtigkeit
-
-
+        double cw = 0;
+        double ca = 0;
 
         // interpolate instructions
         List<Interaction> interpolatedInteractions = InterpolateInteractions(interactions, steps);
