@@ -138,6 +138,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4005842866111088}
+  - component: {fileID: 114115359737625818}
+  - component: {fileID: 167531094503984654}
   m_Layer: 0
   m_Name: b747
   m_TagString: Untagged
@@ -1466,6 +1468,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   simName: {fileID: 114493270329150962}
+--- !u!114 &114115359737625818
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1389233388279804}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0513022c8dea54d5791ea805b5606af7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  engineSound: {fileID: 8300000, guid: 77ce3af27181b433b887ee3b61ac2fca, type: 3}
+  pitchMax: 1.2
+  pitchMin: 0.8
+  volume: 0.5
 --- !u!114 &114185208112245662
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1507,6 +1524,8 @@ MonoBehaviour:
   aircraftHandler: {fileID: 0}
   pathHandler: {fileID: 0}
   windVelocity: {x: 0, y: 0}
+  metersAboveSeaLevel: 0
+  temperature: 20
   time: 0
   play: 0
   color: {r: 0, g: 0, b: 0, a: 0}
@@ -1661,6 +1680,29 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 0
   m_Loop: 0
+--- !u!167 &167531094503984654
+AudioReverbZone:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1389233388279804}
+  m_Enabled: 1
+  m_MinDistance: 10
+  m_MaxDistance: 200
+  m_ReverbPreset: 1
+  m_Room: -1000
+  m_RoomHF: -100
+  m_DecayTime: 1.49
+  m_DecayHFRatio: 0.83
+  m_Reflections: -2602
+  m_ReflectionsDelay: 0.007
+  m_Reverb: 200
+  m_ReverbDelay: 0.011
+  m_HFReference: 5000
+  m_Diffusion: 100
+  m_Density: 100
+  m_LFReference: 250
+  m_RoomLF: 0
 --- !u!222 &222576428679027342
 CanvasRenderer:
   m_ObjectHideFlags: 1

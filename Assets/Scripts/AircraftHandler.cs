@@ -11,12 +11,16 @@ public class AircraftHandler : MonoBehaviour {
     // aircraft models
     protected GameObject smallAircraft;
     protected GameObject largeAircraft;
+    protected AircraftSound activeAircraftSound;
 
     public void Awake()
     {
         sim = this.transform.parent.GetComponent<Simulation>();
         smallAircraft = GameObject.Find("AircraftHandler/Cessna");
         largeAircraft = GameObject.Find("AircraftHandler/b747");
+
+        EventManager.OnPlay += PlaySound;
+        EventManager.OnPause += StopSound;
     }
 
     public void Start()
@@ -70,17 +74,46 @@ public class AircraftHandler : MonoBehaviour {
 
         Vector3 newRotation = prev.rotation;
         Reposition(newPosition, newRotation);
+        UpdateSound(prev.interaction.thrust);
+    }
+
+    public void PlaySound()
+    {
+        Debug.Log("Play sound");
+        if (activeAircraftSound != null)
+        {
+            activeAircraftSound.Play();
+        }
+    }
+
+    public void StopSound()
+    {
+        Debug.Log("Stop sound");
+        if (activeAircraftSound != null)
+        {
+            activeAircraftSound.Stop();
+        }
+    }
+
+    public void UpdateSound(double thrust)
+    {
+        if (activeAircraftSound != null)
+        {
+            activeAircraftSound.SetThrust(thrust);
+        }
     }
 
     public void ShowModel(GameObject model)
     {
         MeshRenderer render = model.GetComponentInChildren<MeshRenderer>();
         render.enabled = true;
+        activeAircraftSound = model.GetComponent<AircraftSound>();
     }
 
     public void HideModel(GameObject model)
     {
         MeshRenderer render = model.GetComponentInChildren<MeshRenderer>();
         render.enabled = false;
+        activeAircraftSound = null;
     }
 }

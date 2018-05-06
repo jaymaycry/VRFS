@@ -7,16 +7,22 @@ public class Interaction {
     public double pitch;
     public double thrust;
     public int time;
+    public int smoothSteps;
 
-    public Interaction(double pitch, double thrust, int time, bool edit)
+    public Interaction(double pitch, double thrust, int time, int smoothSteps, bool edit)
     {
         this.pitch = pitch;
         this.thrust = thrust;
         this.time = time;
         this.edit = edit;
+        this.smoothSteps = smoothSteps;
     }
 
-    public Interaction(double pitch, double thrust, int time): this(pitch, thrust, time, false)
+    public Interaction(double pitch, double thrust, int time): this(pitch, thrust, time, 50, false)
+    {
+    }
+
+    public Interaction(double pitch, double thrust, int time, bool edit): this(pitch, thrust, time, 50, edit)
     {
     }
 

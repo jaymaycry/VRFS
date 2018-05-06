@@ -61,6 +61,7 @@ public static class FlightEngine
     {
         List<Interaction> interpolated = new List<Interaction>();
 
+        Interaction last = new Interaction(0, 0, 0);
         Interaction current = new Interaction(0, 0, 0);
         Interaction next = new Interaction(0, 0, steps - 1);
 
@@ -78,15 +79,24 @@ public static class FlightEngine
             // update current
             if (i >= next.time)
             {
+                Debug.Log("reset last and current");
+                last = current;
                 current = next;
 
                 if (j < interactions.Count)
                     next = interactions[j];
+                else
+                    next = new Interaction(current.pitch, current.thrust, steps - 1);
                 
                 j++;
             }
 
-            interpolated.Add(current);
+            double interpolationHelper = (i - current.time < current.smoothSteps) ? (i - current.time) / (double)current.smoothSteps : 1;
+            double interpolatedPitch = (current.pitch - last.pitch) * interpolationHelper + last.pitch;
+            double interpolatedThrust = (current.thrust - last.thrust) * interpolationHelper + last.thrust;
+            Debug.Log("i: " + i + " helper: " + interpolationHelper + " pitch: " + interpolatedPitch + " thrust: " + interpolatedThrust + " last pitch: " + last.pitch + " current pitch: " + current.pitch);
+
+            interpolated.Add(new Interaction(interpolatedPitch, interpolatedThrust, i, 0, false));
         }
 
         return interpolated;
@@ -162,6 +172,7 @@ public static class FlightEngine
                                        new Vector3(0f, lift.y, lift.x),
                                        new Vector3(0f, gravity.y, gravity.x),
                                        new Vector3(0f, thrust.y, thrust.x),
+                                       interpolatedInteractions[i],
                                        i));
         }
         Debug.Log("Waypoints calculated");
