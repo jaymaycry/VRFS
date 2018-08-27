@@ -159,6 +159,13 @@ public class PlayerUI : MonoBehaviour {
         EventManager.OpenAircraftUI(SimulationHandler.activeSim, aircraft);
     }
 
+    public void EditEnvironment()
+    {
+        Debug.Log("edit environment button pressed");
+        Simulation simulation = SimulationHandler.activeSim;
+        EventManager.OpenEnvironmentUI(simulation);
+    }
+
     public void SelectActiveSimulation(Dropdown dropdown)
     {
         Debug.Log("active simulation changed to " + dropdown.value);

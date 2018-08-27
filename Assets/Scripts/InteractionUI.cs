@@ -26,7 +26,6 @@ public class InteractionUI : MonoBehaviour
         pitchSlider = GameObject.Find("UI/Interaction/Panel/Pitch/Slider").GetComponent<Slider>();
         pitchValue = GameObject.Find("UI/Interaction/Panel/Pitch/Value").GetComponent<Text>();
 
-
         thrustSlider = GameObject.Find("UI/Interaction/Panel/Thrust/Slider").GetComponent<Slider>();
         thrustValue = GameObject.Find("UI/Interaction/Panel/Thrust/Value").GetComponent<Text>();
 
