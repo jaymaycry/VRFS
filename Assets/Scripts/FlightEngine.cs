@@ -109,6 +109,7 @@ public static class FlightEngine
         bool grounded = true;
         double thrustFactor = 0;
         double angleOfAttack = 0;
+        double gamma = 0;
         double cw = 0;
         double ca = 0;
 
@@ -141,6 +142,7 @@ public static class FlightEngine
                 resultingforce.y = 0;
             }
 
+            gamma = CalcSlope(new Vector2(velocity.z, velocity.y));
             angleOfAttack = CalcAngleOfAttack(pitch, new Vector2(velocity.z, velocity.y));
             // todo fix this....
             cw = aircraft.CalcCW(angleOfAttack);
@@ -162,6 +164,12 @@ public static class FlightEngine
                                        new Vector3(0f, lift.y, lift.x),
                                        new Vector3(0f, gravity.y, gravity.x),
                                        new Vector3(0f, thrust.y, thrust.x),
+                                       gamma,
+                                       angleOfAttack,
+                                       thrustFactor,
+                                       pitch,
+                                       ca,
+                                       cw,
                                        i));
         }
         Debug.Log("Waypoints calculated");

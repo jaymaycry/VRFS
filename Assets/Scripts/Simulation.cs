@@ -82,4 +82,13 @@ public class Simulation : MonoBehaviour {
         Debug.Log("set active sim");
         SimulationHandler.activeSim = this;
     }
+
+    public List<string> printData() {
+        List<string> data = new List<string>();
+        data.Add(Waypoint.printHeader());
+        foreach(Waypoint wp in waypoints) {
+            data.Add(wp.printData());
+        }
+        return data;
+    }
 }

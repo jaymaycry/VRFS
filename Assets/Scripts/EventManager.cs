@@ -24,11 +24,13 @@ public class EventManager : MonoBehaviour
     public delegate void PauseAction();
     public delegate void SetTimeAction(int time);
     public delegate void SetScaleAction(float scale);
+    public delegate void PrintAction();
 
     public static event PlayAction OnPlay;
     public static event PauseAction OnPause;
     public static event SetTimeAction OnSetTime;
     public static event SetScaleAction OnSetScale;
+    public static event PrintAction OnPrint;
 
     // gui actions
     public delegate void OpenInteractionUIAction(Simulation sim, Interaction interaction);
@@ -136,6 +138,13 @@ public class EventManager : MonoBehaviour
         Debug.Log("scale changed");
         if (OnSetScale != null)
             OnSetScale(scale);
+    }
+
+    public static void Print()
+    {
+        Debug.Log("print data");
+        if (OnPrint != null)
+            OnPrint();
     }
 
     public static void OpenInteractionUI(Simulation sim, Interaction interaction)

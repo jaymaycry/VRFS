@@ -19,6 +19,7 @@ public class PlayerUI : MonoBehaviour {
     Button deleteButton;
     Button cloneButton;
 
+
     // Use this for initialization
     protected void Awake()
     {
@@ -83,6 +84,12 @@ public class PlayerUI : MonoBehaviour {
     {
         EventManager.Pause();
         Debug.Log("pause button pressed.");
+    }
+
+    public void Export()
+    {
+        EventManager.Print();
+        Debug.Log("export data button pressed.");
     }
 
     public void Rewind()

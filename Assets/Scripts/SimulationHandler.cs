@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
+
 
 public class SimulationHandler : MonoBehaviour {
     public static List<Simulation> sims = new List<Simulation>();
@@ -11,7 +14,7 @@ public class SimulationHandler : MonoBehaviour {
     public static int time = 0;
     public static bool play = false;
 
-    public static Random random = new Random();
+    public static UnityEngine.Random random = new UnityEngine.Random();
     public static List<Color> colors = new List<Color>();
 
     private void Awake()
@@ -28,6 +31,7 @@ public class SimulationHandler : MonoBehaviour {
         EventManager.OnSetScale += SetScale;
         EventManager.OnCloneSimulation += CloneSim;
         EventManager.OnRemoveSimulation += RemoveSim;
+        EventManager.OnPrint += Print;
     }
 
     // Use this for initialization
@@ -123,10 +127,36 @@ public class SimulationHandler : MonoBehaviour {
     {
         if (colors.Count > 0)
         {
-            Color newColor = colors[Random.Range(0, colors.Count - 1)];
+            Color newColor = colors[UnityEngine.Random.Range(0, colors.Count - 1)];
             colors.Remove(newColor);
             return newColor;
         }
         return Color.grey;
+    }
+
+    protected void Print()
+    {
+        Debug.Log("Export data");
+        string date = System.DateTime.Now.ToString("s");
+        foreach(Simulation sim in sims) {
+            List<string> data = sim.printData();
+            string folder = "EXPORT/" + date;
+            string filename = sim.name + ".txt";
+            string path = folder + "/" + filename;
+            Debug.Log("Exporting data for " + sim.name + " to " + path);
+
+            try {
+                Directory.CreateDirectory(folder);
+                StreamWriter writer = new StreamWriter(path, true);
+                foreach (string line in data)
+                {
+                    writer.WriteLine(line);
+                }
+                writer.Close();
+            } catch (Exception e) {
+                Debug.LogException(e, this);
+            }
+
+        }
     }
 }
