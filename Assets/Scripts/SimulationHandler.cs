@@ -137,7 +137,7 @@ public class SimulationHandler : MonoBehaviour {
     protected void Print()
     {
         Debug.Log("Export data");
-        string date = System.DateTime.Now.ToString("s");
+        string date = System.DateTime.Now.ToString("yyyyMMddHHmmss");
         foreach(Simulation sim in sims) {
             List<string> data = sim.printData();
             string folder = "EXPORT/" + date;
