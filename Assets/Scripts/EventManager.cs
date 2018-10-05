@@ -24,11 +24,13 @@ public class EventManager : MonoBehaviour
     public delegate void PauseAction();
     public delegate void SetTimeAction(int time);
     public delegate void SetScaleAction(float scale);
+    public delegate void PrintAction();
 
     public static event PlayAction OnPlay;
     public static event PauseAction OnPause;
     public static event SetTimeAction OnSetTime;
     public static event SetScaleAction OnSetScale;
+    public static event PrintAction OnPrint;
 
     // gui actions
     public delegate void OpenInteractionUIAction(Simulation sim, Interaction interaction);
@@ -36,6 +38,12 @@ public class EventManager : MonoBehaviour
 
     public static event OpenInteractionUIAction OnOpenInteractionUI;
     public static event CloseInteractionUIAction OnCloseInteractionUI;
+
+    public delegate void OpenEnvironmentUIAction(Simulation sim);
+    public delegate void CloseEnvironmentUIAction();
+
+    public static event OpenEnvironmentUIAction OnOpenEnvironmentUI;
+    public static event CloseEnvironmentUIAction OnCloseEnvironmentUI;
 
     public delegate void OpenPlayerUIAction();
     public delegate void ClosePlayerUIAction();
@@ -65,6 +73,13 @@ public class EventManager : MonoBehaviour
     public static void InteractionChanged(Simulation sim)
     {
         Debug.Log("interaction changed");
+        if (OnChange != null)
+            OnChange(sim);
+    }
+
+    public static void EnvironmentChanged(Simulation sim)
+    {
+        Debug.Log("environment changed");
         if (OnChange != null)
             OnChange(sim);
     }
@@ -125,12 +140,20 @@ public class EventManager : MonoBehaviour
             OnSetScale(scale);
     }
 
+    public static void Print()
+    {
+        Debug.Log("print data");
+        if (OnPrint != null)
+            OnPrint();
+    }
+
     public static void OpenInteractionUI(Simulation sim, Interaction interaction)
     {
         Debug.Log("open interaction ui");
 
         CloseAircraftUI();
         ClosePolarCurveUI();
+        CloseEnvironmentUI();
 
         if (OnOpenInteractionUI != null)
             OnOpenInteractionUI(sim, interaction);
@@ -142,6 +165,26 @@ public class EventManager : MonoBehaviour
 
         if (OnCloseInteractionUI != null)
             OnCloseInteractionUI();
+    }
+
+    public static void OpenEnvironmentUI(Simulation sim)
+    {
+        Debug.Log("open environment ui");
+
+        CloseAircraftUI();
+        ClosePolarCurveUI();
+        CloseInteractionUI();
+
+        if (OnOpenEnvironmentUI != null)
+            OnOpenEnvironmentUI(sim);
+    }
+
+    public static void CloseEnvironmentUI()
+    {
+        Debug.Log("close environment ui");
+
+        if (OnCloseEnvironmentUI != null)
+            OnCloseEnvironmentUI();
     }
 
     public static void OpenPlayerUI()
@@ -164,8 +207,9 @@ public class EventManager : MonoBehaviour
     {
         Debug.Log("open aircraft ui");
 
-        CloseInteractionUI();
         ClosePolarCurveUI();
+        CloseInteractionUI();
+        CloseEnvironmentUI();
 
         if (OnOpenAircraftUI != null)
             OnOpenAircraftUI(sim, aircraft);
@@ -183,8 +227,9 @@ public class EventManager : MonoBehaviour
     {
         Debug.Log("open polar curve ui");
 
-        CloseInteractionUI();
         CloseAircraftUI();
+        CloseInteractionUI();
+        CloseEnvironmentUI();
 
         if (OnOpenPolarCurveUI != null)
             OnOpenPolarCurveUI(sim, aircraft);
